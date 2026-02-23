@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&display=swap');
+@import 'tailwindcss';
+
+/* ─── Tailwind v4: Variante de dark mode via clase en <html> ─────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Design Tokens: valores default (modo claro) ───────────────────────── */
+@theme {
+  /* TIPOGRAFÍA — FAMILIA */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+
+  /* COLORES — SUPERFICIE */
+  --color-surface-base: #f9fafb;
+  --color-surface-elevated: #ffffff;
+  --color-surface-overlay: rgba(0, 0, 0, 0.45);
+
+  /* COLORES — TEXTO */
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-disabled: #9ca3af;
+  --color-text-inverse: #ffffff;
+
+  /* COLORES — BORDE */
+  --color-border-default: #e5e7eb;
+  --color-border-strong: #9ca3af;
+
+  /* COLORES — FEEDBACK */
+  --color-feedback-error: #dc2626;
+  --color-feedback-error-surface: #fef2f2;
+  --color-feedback-success: #15803d;
+  --color-feedback-success-surface: #f0fdf4;
+  --color-feedback-warning: #b45309;
+  --color-feedback-warning-surface: #fffbeb;
+  --color-feedback-info: #1d4ed8;
+  --color-feedback-info-surface: #eff6ff;
+
+  /* COLORES — INTERACTIVO */
+  --color-interactive-primary: #1d4ed8;
+  --color-interactive-primary-hover: #1e40af;
+  --color-interactive-primary-text: #ffffff;
+  --color-interactive-secondary-border: #1d4ed8;
+  --color-interactive-secondary-text: #1d4ed8;
+  --color-focus-ring: #3b82f6;
+
+  /* COLORES — TURNO DINÁMICO (soporte) */
+  --color-shift-text-on-light: #1f2937;
+  --color-shift-text-on-dark: #f9fafb;
+
+  /* BORDES — RADIO */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* SOMBRAS */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  /* TRANSICIONES — DURACIÓN */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-xslow: 500ms;
+
+  /* TRANSICIONES — EASING */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ESPACIADO — SEMÁNTICO */
+  --height-calendar-cell-mobile: 3.5rem;
+  --height-calendar-cell-desktop: 5rem;
+  --height-tap-target: 2.75rem;
+}
+
+/* ─── Design Tokens: overrides modo oscuro ───────────────────────────────── */
+.dark {
+  /* SUPERFICIE */
+  --color-surface-base: #111827;
+  --color-surface-elevated: #1f2937;
+  --color-surface-overlay: rgba(0, 0, 0, 0.7);
+
+  /* TEXTO */
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #9ca3af;
+  --color-text-disabled: #4b5563;
+  --color-text-inverse: #111827;
+
+  /* BORDE */
+  --color-border-default: #374151;
+  --color-border-strong: #4b5563;
+
+  /* FEEDBACK */
+  --color-feedback-error: #f87171;
+  --color-feedback-error-surface: rgba(239, 68, 68, 0.15);
+  --color-feedback-success: #4ade80;
+  --color-feedback-success-surface: rgba(74, 222, 128, 0.15);
+  --color-feedback-warning: #fcd34d;
+  --color-feedback-warning-surface: rgba(252, 211, 77, 0.15);
+  --color-feedback-info: #60a5fa;
+  --color-feedback-info-surface: rgba(96, 165, 250, 0.15);
+
+  /* INTERACTIVO */
+  --color-interactive-primary: #2563eb;
+  --color-interactive-primary-hover: #1d4ed8;
+  --color-interactive-primary-text: #ffffff;
+  --color-interactive-secondary-border: #3b82f6;
+  --color-interactive-secondary-text: #93c5fd;
+  --color-focus-ring: #93c5fd;
+
+  /* SOMBRAS (más profundas en dark mode) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────────── */
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-base);
+  color: var(--color-text-primary);
+}
