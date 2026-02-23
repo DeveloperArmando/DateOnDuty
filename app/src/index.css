@@ -76,6 +76,20 @@
   --animate-year-next: dod-year-enter-from-right 200ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
   --animate-year-prev: dod-year-enter-from-left 200ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
 
+  /* ANIMACIONES — BOTTOM SHEET / MODAL */
+  --animate-sheet-enter: dod-sheet-enter 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-sheet-exit: dod-sheet-exit 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-modal-enter: dod-modal-enter 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-modal-exit: dod-modal-exit 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-overlay-enter: dod-overlay-enter 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-overlay-exit: dod-overlay-exit 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+
+  /* ANIMACIONES — PANEL DE DÍA (contenido interno) */
+  --animate-panel-enter-left: dod-panel-enter-left 100ms ease-in-out both;
+  --animate-panel-enter-right: dod-panel-enter-right 100ms ease-in-out both;
+  --animate-panel-enter-top: dod-panel-enter-top 100ms ease-in-out both;
+  --animate-panel-enter-bottom: dod-panel-enter-bottom 100ms ease-in-out both;
+
   /* ESPACIADO — SEMÁNTICO */
   --height-calendar-cell-mobile: 3.5rem;
   --height-calendar-cell-desktop: 5rem;
@@ -218,6 +232,106 @@
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* Bottom Sheet: slide desde abajo (mobile) */
+@keyframes dod-sheet-enter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes dod-sheet-exit {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Modal: scale con bounce (desktop) */
+@keyframes dod-modal-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes dod-modal-exit {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+}
+
+/* Overlay: fade */
+@keyframes dod-overlay-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dod-overlay-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Panel de día: transiciones de contenido interno (100ms) */
+@keyframes dod-panel-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-8%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes dod-panel-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(8%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes dod-panel-enter-top {
+  from {
+    opacity: 0;
+    transform: translateY(-8%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes dod-panel-enter-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(8%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

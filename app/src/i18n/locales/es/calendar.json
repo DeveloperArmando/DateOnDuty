@@ -16,6 +16,19 @@
   "helpButton": "Ayuda",
   "calendarNavLabel": "Navegación del calendario",
 
+  "panel": {
+    "closePanel": "Cerrar detalle del día",
+    "viewInSearch": "Ver en buscador de fechas",
+    "allOffDuty": "Día libre",
+    "allOffDutyDesc": "Ningún turno activo este día",
+    "activeShifts": "Turnos activos",
+    "entry": "Entrada a las {{time}}",
+    "exit": "Salida a las {{time}}",
+    "onDuty": "En turno",
+    "offDuty": "Día libre",
+    "defaultConfigName": "Mi turno"
+  },
+
   "importTitle": "Turno recibido",
   "importReplace": "Reemplazar mi turno actual",
   "importAdd": "Guardar como nuevo turno",
