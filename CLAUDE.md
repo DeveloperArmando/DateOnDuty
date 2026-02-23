@@ -6,10 +6,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **DateOnDuty** is a frontend-only web app for rotating shift workers (24x48, 12x36, 48x48, etc.) to visualize their work calendar, query any date, and share their schedule. No backend in MVP (v1.0) — all logic runs in the browser with localStorage as the only persistence.
 
-The project is in **planning/design phase**. The authoritative references are:
+The project is in **implementation phase**. Design system is complete. Core Engine and Zustand stores are implemented. Feature components are not yet started.
+
+The authoritative references are:
 - `docs/DateOnDuty_PRD_v2.md` — product requirements and user stories
 - `docs/DateOnDuty_Architecture_v1.md` — stack decisions, architecture rules, data schemas, and algorithm details
-- `agents/` — AI agent role definitions for each team function (PO, Architect, Frontend Dev, Backend Dev, DevOps, QA, UX/UI, AI Engineer)
+- `docs/DOD_DECISIONS_LOG.md` — all product and architecture decisions already taken (read before proposing changes)
+- `docs/DOD_EDGE_CASES.md` — resolved edge cases and behavioral rules per epic (validation limits, color rules, onboarding timing, etc.)
+- `docs/design/design-tokens.md` — CSS custom properties, Tailwind theme extension, color semantics
+- `docs/design/animation-specs.md` — all animation/transition specs (durations, easings, keyframes). Source of truth over any component spec.
+- `docs/design/i18n-namespaces.md` — complete i18n key map for all 6 namespaces
+
+**Agent definitions:** role docs in `agents/`. Claude Code native agents in `.claude/agents/` (used automatically by Claude Code subagent invocations).
 
 ---
 

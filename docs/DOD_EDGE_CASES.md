@@ -69,8 +69,10 @@
 **Resolución:** El mínimo de horas de descanso es **12 horas**. El sistema no permite valores menores.
 
 ### CE-10 — Fecha de inicio de turno en el futuro
-**Escenario:** El usuario configura que su primer día de turno es en el futuro.  
-**Resolución:** Soportado. El sistema debe permitir consultar fechas anteriores al inicio configurado, calculando el turno hacia atrás con la misma lógica. Los días anteriores a la fecha de inicio se muestran sin turno asignado (sin color ni marcado como franco).
+**Escenario:** El usuario configura que su primer día de turno es en el futuro.
+**Resolución:** Soportado. El sistema calcula el estado de cualquier fecha usando `moduloPositivo` — esto incluye fechas anteriores al `cycleStartDate`, calculando el ciclo hacia atrás con la misma lógica (ver también CE-15). El calendario no muestra ningún estado especial para esas fechas: las muestra como `off_duty` o `entry/exit/on_duty` según corresponda al ciclo calculado hacia atrás.
+
+> **Nota de implementación:** La segunda oración de la resolución original ("sin turno asignado") era imprecisa. El comportamiento correcto — confirmado por CE-15 y el Core Engine — es calcular hacia atrás, no omitir el resultado.
 
 ### CE-11 — Configuración inicial: en turno o en franco
 **Escenario:** Al configurar por primera vez, el usuario puede estar en turno o en franco en ese momento.  
