@@ -31,7 +31,7 @@ export function LoadingDots({ size = 'md' }: LoadingDotsProps) {
           key={i}
           className={`${dotSizeClass[size]} rounded-full bg-current`}
           style={{
-            animation: 'bounce-dot 600ms ease-in-out infinite',
+            animation: 'dod-bounce-dot 600ms ease-in-out infinite',
             animationDelay: `${i * 150}ms`,
           }}
         />

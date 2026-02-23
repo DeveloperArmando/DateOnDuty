@@ -70,6 +70,12 @@
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-snap: cubic-bezier(0.25, 0.1, 0.25, 1);
 
+  /* ANIMACIONES — CALENDARIO */
+  --animate-month-next: dod-month-enter-from-bottom 200ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  --animate-month-prev: dod-month-enter-from-top 200ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  --animate-year-next: dod-year-enter-from-right 200ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  --animate-year-prev: dod-year-enter-from-left 200ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+
   /* ESPACIADO — SEMÁNTICO */
   --height-calendar-cell-mobile: 3.5rem;
   --height-calendar-cell-desktop: 5rem;
@@ -120,7 +126,7 @@
 /* ─── Keyframes de animación ─────────────────────────────────────────────── */
 
 /* LoadingDots: bounce secuencial de 3 puntos (600ms / ciclo) */
-@keyframes bounce-dot {
+@keyframes dod-bounce-dot {
   0%,
   80%,
   100% {
@@ -128,6 +134,90 @@
   }
   40% {
     transform: translateY(-4px);
+  }
+}
+
+/* Calendario: transición de mes (eje vertical — swipe ↕) */
+@keyframes dod-month-exit-up {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-8%);
+    opacity: 0;
+  }
+}
+@keyframes dod-month-enter-from-bottom {
+  from {
+    transform: translateY(8%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes dod-month-exit-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(8%);
+    opacity: 0;
+  }
+}
+@keyframes dod-month-enter-from-top {
+  from {
+    transform: translateY(-8%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Calendario: transición de año (eje horizontal — swipe ↔) */
+@keyframes dod-year-exit-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-8%);
+    opacity: 0;
+  }
+}
+@keyframes dod-year-enter-from-right {
+  from {
+    transform: translateX(8%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes dod-year-exit-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(8%);
+    opacity: 0;
+  }
+}
+@keyframes dod-year-enter-from-left {
+  from {
+    transform: translateX(-8%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
