@@ -1,0 +1,13 @@
+{
+  "swipeHint": "Desliza para navegar entre meses",
+
+  "bannerTitle": "Configura tu turno",
+  "bannerSubtitle": "Toca aquí para configurar tu horario y ver tu calendario",
+
+  "helpTitle": "¿Cómo usar DateOnDuty?",
+  "helpSwipeMonths": "Desliza arriba o abajo para cambiar de mes",
+  "helpSwipeYears": "Desliza a los lados para cambiar de año",
+  "helpTapDay": "Toca un día para ver el detalle",
+  "helpShare": "Comparte tu turno con el botón de compartir",
+  "helpClose": "Entendido"
+}

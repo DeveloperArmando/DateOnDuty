@@ -1,0 +1,39 @@
+{
+  "appName": "DateOnDuty",
+
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "close": "Cerrar",
+  "delete": "Eliminar",
+  "edit": "Editar",
+  "back": "Volver",
+  "confirm": "Confirmar",
+  "loading": "Cargando...",
+  "error": "Error",
+  "retry": "Reintentar",
+  "today": "Hoy",
+  "yes": "Sí",
+  "no": "No",
+
+  "nav": {
+    "calendar": "Calendario",
+    "config": "Mis turnos",
+    "search": "Buscar fecha",
+    "feedback": "Feedback",
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad"
+  },
+
+  "shiftStatus": {
+    "entry": "Entrada",
+    "exit": "Salida",
+    "onDuty": "En turno",
+    "offDuty": "Franco"
+  },
+
+  "invalidLink": "El enlace compartido no es válido o está incompleto.",
+  "connectionError": "Error de conexión. Verifica tu internet e intenta de nuevo.",
+
+  "tabChangeNotice": "Hay cambios en otra pestaña.",
+  "tabChangeUpdate": "Actualizar"
+}

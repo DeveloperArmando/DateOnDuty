@@ -1,0 +1,21 @@
+{
+  "title": "Feedback",
+  "subtitle": "¿Encontraste un error o tienes alguna sugerencia?",
+
+  "emailLabel": "Tu correo electrónico",
+  "emailPlaceholder": "correo@ejemplo.com",
+  "messageLabel": "Mensaje",
+  "messagePlaceholder": "Cuéntanos qué mejorarías o qué error encontraste...",
+  "sendButton": "Enviar feedback",
+
+  "successMessage": "¡Gracias por tu feedback! Lo revisaremos pronto.",
+  "cooldownMessage": "Por favor espera {{seconds}} segundos antes de enviar de nuevo.",
+  "timeoutWarning": "Esto está tomando más tiempo de lo usual...",
+
+  "validation": {
+    "emailRequired": "El correo es obligatorio.",
+    "emailInvalid": "El correo no tiene un formato válido.",
+    "messageRequired": "El mensaje es obligatorio.",
+    "messageTooShort": "El mensaje debe tener al menos 10 caracteres."
+  }
+}

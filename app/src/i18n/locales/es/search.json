@@ -1,0 +1,8 @@
+{
+  "title": "Buscar fecha",
+  "dateLabel": "Fecha a consultar",
+  "searchButton": "Consultar",
+  "resultTitle": "Resultado para {{date}}",
+  "noActiveConfigs": "No tienes turnos activos configurados.",
+  "goToConfig": "Configurar mis turnos"
+}

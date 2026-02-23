@@ -1,0 +1,57 @@
+{
+  "title": "Mi Calendario",
+
+  "prevMonth": "Mes anterior",
+  "nextMonth": "Mes siguiente",
+  "prevYear": "Año anterior",
+  "nextYear": "Año siguiente",
+  "goToToday": "Ir a hoy",
+
+  "expandDay": "Ver detalle del día",
+  "closeDay": "Cerrar detalle",
+  "prevDay": "Día anterior",
+  "nextDay": "Día siguiente",
+
+  "shareSchedule": "Compartir turno",
+  "helpButton": "Ayuda",
+
+  "importTitle": "Turno recibido",
+  "importReplace": "Reemplazar mi turno actual",
+  "importAdd": "Guardar como nuevo turno",
+  "importDiscard": "Ignorar",
+  "importNameLabel": "Nombre para el turno importado",
+  "importOldNameLabel": "Nombre para tu turno actual",
+
+  "days": {
+    "sun": "Dom",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb"
+  },
+  "daysLong": {
+    "sun": "Domingo",
+    "mon": "Lunes",
+    "tue": "Martes",
+    "wed": "Miércoles",
+    "thu": "Jueves",
+    "fri": "Viernes",
+    "sat": "Sábado"
+  },
+  "months": {
+    "jan": "Enero",
+    "feb": "Febrero",
+    "mar": "Marzo",
+    "apr": "Abril",
+    "may": "Mayo",
+    "jun": "Junio",
+    "jul": "Julio",
+    "aug": "Agosto",
+    "sep": "Septiembre",
+    "oct": "Octubre",
+    "nov": "Noviembre",
+    "dec": "Diciembre"
+  }
+}

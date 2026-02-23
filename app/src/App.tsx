@@ -1,9 +1,9 @@
-function App() {
-  return (
-    <div className="min-h-screen bg-surface-base text-text-primary">
-      <p>DateOnDuty</p>
-    </div>
-  )
-}
+// Inicializa i18next como side effect antes de montar cualquier componente.
+import '@/i18n/config'
 
-export default App
+import { RouterProvider } from 'react-router-dom'
+import { router } from '@/app/router'
+
+export default function App() {
+  return <RouterProvider router={router} />
+}
