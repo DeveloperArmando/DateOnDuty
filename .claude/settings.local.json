@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(npm create:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm install 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npx husky init 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm run typecheck 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm run lint 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm run format:check 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm run format:write 2>&1 && npm run format:check 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm run test 2>&1)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty/app && npm run build 2>&1)",
+      "Bash(ls:*)",
+      "Bash(cd /c/Users/arman/projects/DateOnDuty && git add app/.husky/pre-commit && git commit -m \"$\\(cat <<'EOF'\nfeat: scaffold frontend app in app/ subdirectory\n\n- Vite 7 + React 19 + TypeScript 5 \\(strict\\) project in app/\n- Tailwind CSS 4 con @theme y design tokens completos \\(light/dark\\)\n- Zustand 5, React Router 7, date-fns 4, react-i18next, @use-gesture/react\n- Vitest 3 + RTL + ESLint 9 + Prettier + Husky con lint-staged\n- Estructura de directorios completa \\(core, stores, features, shared, i18n\\)\n- src/shared/constants/design.ts con paleta de colores y constantes del DS\n- Todos los checks pasan: typecheck, lint, format:check, test, build\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" 2>&1)"
     ]
   }
 }
