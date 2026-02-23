@@ -14,6 +14,7 @@
 
   "shareSchedule": "Compartir turno",
   "helpButton": "Ayuda",
+  "calendarNavLabel": "Navegación del calendario",
 
   "importTitle": "Turno recibido",
   "importReplace": "Reemplazar mi turno actual",

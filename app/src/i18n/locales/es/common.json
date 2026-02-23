@@ -15,6 +15,26 @@
   "yes": "Sí",
   "no": "No",
 
+  "settings": "Configuración",
+  "feedbackCta": "Enviar feedback",
+  "termsShort": "Términos",
+  "privacyShort": "Privacidad",
+  "backToToday": "Volver a hoy",
+
+  "theme": {
+    "toDark": "Cambiar a modo oscuro",
+    "toLight": "Cambiar a modo claro"
+  },
+
+  "pageTitle": {
+    "config": "Mis turnos",
+    "configDetail": "Editar turno",
+    "search": "Buscar fecha",
+    "feedback": "Enviar feedback",
+    "terms": "Términos y condiciones",
+    "privacy": "Política de privacidad"
+  },
+
   "nav": {
     "calendar": "Calendario",
     "config": "Mis turnos",
