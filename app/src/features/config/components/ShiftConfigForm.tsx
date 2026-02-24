@@ -16,6 +16,7 @@ import type { ShiftConfiguration, ShiftScheme, TimeFormat } from '@/core/shift-c
 import { useConfigStore } from '@/stores/config-store'
 import { useThemeStore } from '@/stores/theme-store'
 import { Button } from '@/shared/components/Button'
+import { Toast } from '@/shared/components/Toast'
 import { scrollToFirstError } from '@/shared/utils/scroll-to-error'
 import { ColorPicker } from './ColorPicker'
 
@@ -115,6 +116,7 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [nameDuplicateError, setNameDuplicateError] = useState<string | null>(null)
+  const [showToast, setShowToast] = useState(false)
 
   // ─── Derived values ───────────────────────────────────────────────────────
 
@@ -226,7 +228,7 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
     }
 
     setIsSubmitting(false)
-    navigate('/config')
+    setShowToast(true)
   }
 
   // ─── Shared input class ───────────────────────────────────────────────────
@@ -243,348 +245,370 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <form
-      id={fId('form')}
-      onSubmit={handleSubmit}
-      noValidate
-      className="space-y-6 p-4 sm:mx-auto sm:max-w-[480px]"
-    >
-      {/* ── Name (non-default only) ── */}
-      {!isDefault && (
-        <div data-error={errors.name ? 'true' : undefined}>
-          <label
-            htmlFor={fId('name')}
-            className="mb-1.5 block text-sm font-medium text-text-primary"
-          >
-            {t('name')}
-          </label>
-          <input
-            id={fId('name')}
-            type="text"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value)
-              if (errors.name) setErrors((prev) => ({ ...prev, name: '' }))
-            }}
-            className={inputCls('name')}
-            aria-describedby={
-              errors.name ? fId('name-err') : nameDuplicateError ? fId('name-dup') : undefined
-            }
-          />
-          {errors.name && (
-            <p
-              id={fId('name-err')}
-              role="alert"
-              aria-live="assertive"
-              className="mt-1 text-xs text-feedback-error"
-            >
-              {errors.name}
-            </p>
-          )}
-          {!errors.name && nameDuplicateError && (
-            <p id={fId('name-dup')} aria-live="polite" className="mt-1 text-xs text-feedback-error">
-              {nameDuplicateError}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* ── Scheme ── */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium text-text-primary">{t('scheme')}</legend>
-        <div className="space-y-2">
-          {PRESET_SCHEMES.map((key) => (
-            <label key={key} className="flex cursor-pointer items-center gap-2.5">
-              <input
-                type="radio"
-                name={fId('scheme')}
-                value={key}
-                checked={schemeKey === key}
-                onChange={() => setSchemeKey(key)}
-                className="accent-interactive-primary"
-              />
-              <span className="text-sm text-text-primary">
-                {key === '24x48'
-                  ? t('scheme24x48')
-                  : key === '12x36'
-                    ? t('scheme12x36')
-                    : key === '48x48'
-                      ? t('scheme48x48')
-                      : t('schemeCustom')}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      {/* ── Custom scheme fields (conditional) ── */}
-      {schemeKey === 'custom' && (
-        <div className="animate-field-appear space-y-2">
-          <div className="grid grid-cols-2 gap-3">
-            <div data-error={errors.workHours ? 'true' : undefined}>
-              <label
-                htmlFor={fId('wh')}
-                className="mb-1.5 block text-sm font-medium text-text-primary"
-              >
-                {t('customWorkHours')}
-              </label>
-              <input
-                id={fId('wh')}
-                type="number"
-                min={12}
-                max={72}
-                value={workHours}
-                onChange={(e) => setWorkHours(e.target.value)}
-                className={inputCls('workHours')}
-              />
-              {errors.workHours && (
-                <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
-                  {errors.workHours}
-                </p>
-              )}
-            </div>
-            <div data-error={errors.restHours ? 'true' : undefined}>
-              <label
-                htmlFor={fId('rh')}
-                className="mb-1.5 block text-sm font-medium text-text-primary"
-              >
-                {t('customRestHours')}
-              </label>
-              <input
-                id={fId('rh')}
-                type="number"
-                min={12}
-                max={72}
-                value={restHours}
-                onChange={(e) => setRestHours(e.target.value)}
-                className={inputCls('restHours')}
-              />
-              {errors.restHours && (
-                <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
-                  {errors.restHours}
-                </p>
-              )}
-            </div>
-          </div>
-          <p className="text-xs text-text-secondary">{t('workHoursHelper')}</p>
-        </div>
-      )}
-
-      {/* ── Entry time ── */}
-      <div data-error={errors.entryTime ? 'true' : undefined}>
-        <label htmlFor={fId('time')} className="mb-1.5 block text-sm font-medium text-text-primary">
-          {t('entryTime')}
-        </label>
-        <input
-          id={fId('time')}
-          type="time"
-          value={entryTime}
-          onChange={(e) => setEntryTime(e.target.value)}
-          className={inputCls('entryTime')}
-        />
-        {errors.entryTime && (
-          <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
-            {errors.entryTime}
-          </p>
-        )}
-      </div>
-
-      {/* ── Currently on rest ── */}
-      <div>
-        <label
-          htmlFor={fId('onrest')}
-          className="mb-1.5 block text-sm font-medium text-text-primary"
-        >
-          {t('currentlyOnRest')}
-        </label>
-        <select
-          id={fId('onrest')}
-          value={currentlyOnRest ? 'yes' : 'no'}
-          onChange={(e) => setCurrentlyOnRest(e.target.value === 'yes')}
-          className={`${inputCls('')} cursor-pointer`}
-        >
-          <option value="no">{t('currentlyOnRestNo')}</option>
-          <option value="yes">{t('currentlyOnRestYes')}</option>
-        </select>
-      </div>
-
-      {/* ── Next shift start (conditional on currentlyOnRest) ── */}
-      {currentlyOnRest && (
-        <div className="animate-field-appear">
-          <label
-            htmlFor={fId('nextshift')}
-            className="mb-1.5 block text-sm font-medium text-text-primary"
-          >
-            {t('nextShiftStart')}
-          </label>
-          <select
-            id={fId('nextshift')}
-            value={nextShiftOffset}
-            onChange={(e) => setNextShiftOffset(Number(e.target.value))}
-            className={`${inputCls('')} cursor-pointer`}
-          >
-            {nextShiftOptions.map((opt) => (
-              <option key={opt.offset} value={opt.offset}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {/* ── Cycle start date (hidden when currentlyOnRest) ── */}
-      {!currentlyOnRest && (
-        <div data-error={errors.cycleStartDate ? 'true' : undefined}>
-          <label
-            htmlFor={fId('date')}
-            className="mb-1.5 block text-sm font-medium text-text-primary"
-          >
-            {t('cycleStartDate')}
-          </label>
-          <input
-            id={fId('date')}
-            type="date"
-            value={cycleStartDate}
-            onChange={(e) => setCycleStartDate(e.target.value)}
-            className={inputCls('cycleStartDate')}
-          />
-          {errors.cycleStartDate && (
-            <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
-              {errors.cycleStartDate}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* ── Color picker ── */}
-      <div data-error={errors.color ? 'true' : undefined}>
-        <ColorPicker
-          value={color}
-          onChange={(c) => {
-            setColor(c)
-            if (errors.color) setErrors((prev) => ({ ...prev, color: '' }))
-          }}
-          existingColors={existingColors}
-        />
-        {errors.color && (
-          <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
-            {errors.color}
-          </p>
-        )}
-      </div>
-
-      {/* ── Time format ── */}
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium text-text-primary">{t('timeFormat')}</legend>
-        <div className="space-y-2">
-          {TIME_FORMATS.map((fmt) => (
-            <label key={fmt} className="flex cursor-pointer items-center gap-2.5">
-              <input
-                type="radio"
-                name={fId('tf')}
-                value={fmt}
-                checked={timeFormat === fmt}
-                onChange={() => setTimeFormat(fmt)}
-                className="accent-interactive-primary"
-              />
-              <span className="text-sm text-text-primary">
-                {fmt === '24h'
-                  ? t('timeFormat24h')
-                  : fmt === '12h'
-                    ? t('timeFormat12h')
-                    : t('timeFormatMilitary')}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      {/* ── Global preferences (isDefault only) ── */}
-      {isDefault && (
-        <div className="space-y-6">
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 border-t border-border-default" />
-            <span className="text-xs font-medium uppercase tracking-wider text-text-secondary">
-              {t('globalPrefs')}
-            </span>
-            <div className="flex-1 border-t border-border-default" />
-          </div>
-
-          {/* First day of week */}
-          <fieldset>
-            <legend className="mb-2 text-sm font-medium text-text-primary">
-              {t('firstDayOfWeek')}
-            </legend>
-            <div className="space-y-2">
-              {([0, 1] as const).map((day) => (
-                <label key={day} className="flex cursor-pointer items-center gap-2.5">
-                  <input
-                    type="radio"
-                    name={fId('fdow')}
-                    value={day}
-                    checked={localFirstDay === day}
-                    onChange={() => setLocalFirstDay(day)}
-                    className="accent-interactive-primary"
-                  />
-                  <span className="text-sm text-text-primary">
-                    {day === 0 ? t('firstDayOfWeekSunday') : t('firstDayOfWeekMonday')}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          {/* Grid line color */}
-          <div>
+    <>
+      <form
+        id={fId('form')}
+        onSubmit={handleSubmit}
+        noValidate
+        className="space-y-6 p-4 sm:mx-auto sm:max-w-[480px]"
+      >
+        {/* ── Name (non-default only) ── */}
+        {!isDefault && (
+          <div data-error={errors.name ? 'true' : undefined}>
             <label
-              htmlFor={fId('grid')}
+              htmlFor={fId('name')}
               className="mb-1.5 block text-sm font-medium text-text-primary"
             >
-              {t('gridLineColor')}
+              {t('name')}
+            </label>
+            <input
+              id={fId('name')}
+              type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value)
+                if (errors.name) setErrors((prev) => ({ ...prev, name: '' }))
+              }}
+              className={inputCls('name')}
+              aria-describedby={
+                errors.name ? fId('name-err') : nameDuplicateError ? fId('name-dup') : undefined
+              }
+            />
+            {errors.name && (
+              <p
+                id={fId('name-err')}
+                role="alert"
+                aria-live="assertive"
+                className="mt-1 text-xs text-feedback-error"
+              >
+                {errors.name}
+              </p>
+            )}
+            {!errors.name && nameDuplicateError && (
+              <p
+                id={fId('name-dup')}
+                aria-live="polite"
+                className="mt-1 text-xs text-feedback-error"
+              >
+                {nameDuplicateError}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── Scheme ── */}
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium text-text-primary">{t('scheme')}</legend>
+          <div className="space-y-2">
+            {PRESET_SCHEMES.map((key) => (
+              <label key={key} className="flex cursor-pointer items-center gap-2.5">
+                <input
+                  type="radio"
+                  name={fId('scheme')}
+                  value={key}
+                  checked={schemeKey === key}
+                  onChange={() => setSchemeKey(key)}
+                  className="accent-interactive-primary"
+                />
+                <span className="text-sm text-text-primary">
+                  {key === '24x48'
+                    ? t('scheme24x48')
+                    : key === '12x36'
+                      ? t('scheme12x36')
+                      : key === '48x48'
+                        ? t('scheme48x48')
+                        : t('schemeCustom')}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {/* ── Custom scheme fields (conditional) ── */}
+        {schemeKey === 'custom' && (
+          <div className="animate-field-appear space-y-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div data-error={errors.workHours ? 'true' : undefined}>
+                <label
+                  htmlFor={fId('wh')}
+                  className="mb-1.5 block text-sm font-medium text-text-primary"
+                >
+                  {t('customWorkHours')}
+                </label>
+                <input
+                  id={fId('wh')}
+                  type="number"
+                  min={12}
+                  max={72}
+                  value={workHours}
+                  onChange={(e) => setWorkHours(e.target.value)}
+                  className={inputCls('workHours')}
+                />
+                {errors.workHours && (
+                  <p
+                    role="alert"
+                    aria-live="assertive"
+                    className="mt-1 text-xs text-feedback-error"
+                  >
+                    {errors.workHours}
+                  </p>
+                )}
+              </div>
+              <div data-error={errors.restHours ? 'true' : undefined}>
+                <label
+                  htmlFor={fId('rh')}
+                  className="mb-1.5 block text-sm font-medium text-text-primary"
+                >
+                  {t('customRestHours')}
+                </label>
+                <input
+                  id={fId('rh')}
+                  type="number"
+                  min={12}
+                  max={72}
+                  value={restHours}
+                  onChange={(e) => setRestHours(e.target.value)}
+                  className={inputCls('restHours')}
+                />
+                {errors.restHours && (
+                  <p
+                    role="alert"
+                    aria-live="assertive"
+                    className="mt-1 text-xs text-feedback-error"
+                  >
+                    {errors.restHours}
+                  </p>
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-text-secondary">{t('workHoursHelper')}</p>
+          </div>
+        )}
+
+        {/* ── Entry time ── */}
+        <div data-error={errors.entryTime ? 'true' : undefined}>
+          <label
+            htmlFor={fId('time')}
+            className="mb-1.5 block text-sm font-medium text-text-primary"
+          >
+            {t('entryTime')}
+          </label>
+          <input
+            id={fId('time')}
+            type="time"
+            value={entryTime}
+            onChange={(e) => setEntryTime(e.target.value)}
+            className={inputCls('entryTime')}
+          />
+          {errors.entryTime && (
+            <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
+              {errors.entryTime}
+            </p>
+          )}
+        </div>
+
+        {/* ── Currently on rest ── */}
+        <div>
+          <label
+            htmlFor={fId('onrest')}
+            className="mb-1.5 block text-sm font-medium text-text-primary"
+          >
+            {t('currentlyOnRest')}
+          </label>
+          <select
+            id={fId('onrest')}
+            value={currentlyOnRest ? 'yes' : 'no'}
+            onChange={(e) => setCurrentlyOnRest(e.target.value === 'yes')}
+            className={`${inputCls('')} cursor-pointer`}
+          >
+            <option value="no">{t('currentlyOnRestNo')}</option>
+            <option value="yes">{t('currentlyOnRestYes')}</option>
+          </select>
+        </div>
+
+        {/* ── Next shift start (conditional on currentlyOnRest) ── */}
+        {currentlyOnRest && (
+          <div className="animate-field-appear">
+            <label
+              htmlFor={fId('nextshift')}
+              className="mb-1.5 block text-sm font-medium text-text-primary"
+            >
+              {t('nextShiftStart')}
             </label>
             <select
-              id={fId('grid')}
-              value={localGridColor}
-              onChange={(e) => setLocalGridColor(e.target.value)}
+              id={fId('nextshift')}
+              value={nextShiftOffset}
+              onChange={(e) => setNextShiftOffset(Number(e.target.value))}
               className={`${inputCls('')} cursor-pointer`}
             >
-              {GRID_COLORS.map(({ value, key }) => (
-                <option key={value} value={value}>
-                  {t(key)}
+              {nextShiftOptions.map((opt) => (
+                <option key={opt.offset} value={opt.offset}>
+                  {opt.label}
                 </option>
               ))}
             </select>
           </div>
+        )}
 
-          {/* Theme */}
-          <fieldset>
-            <legend className="mb-2 text-sm font-medium text-text-primary">{t('theme')}</legend>
-            <div className="space-y-2">
-              {(['light', 'dark'] as const).map((th) => (
-                <label key={th} className="flex cursor-pointer items-center gap-2.5">
-                  <input
-                    type="radio"
-                    name={fId('theme')}
-                    value={th}
-                    checked={localTheme === th}
-                    onChange={() => setLocalTheme(th)}
-                    className="accent-interactive-primary"
-                  />
-                  <span className="text-sm text-text-primary">
-                    {th === 'light' ? t('themeLight') : t('themeDark')}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+        {/* ── Cycle start date (hidden when currentlyOnRest) ── */}
+        {!currentlyOnRest && (
+          <div data-error={errors.cycleStartDate ? 'true' : undefined}>
+            <label
+              htmlFor={fId('date')}
+              className="mb-1.5 block text-sm font-medium text-text-primary"
+            >
+              {t('cycleStartDate')}
+            </label>
+            <input
+              id={fId('date')}
+              type="date"
+              value={cycleStartDate}
+              onChange={(e) => setCycleStartDate(e.target.value)}
+              className={inputCls('cycleStartDate')}
+            />
+            {errors.cycleStartDate && (
+              <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
+                {errors.cycleStartDate}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ── Color picker ── */}
+        <div data-error={errors.color ? 'true' : undefined}>
+          <ColorPicker
+            value={color}
+            onChange={(c) => {
+              setColor(c)
+              if (errors.color) setErrors((prev) => ({ ...prev, color: '' }))
+            }}
+            existingColors={existingColors}
+          />
+          {errors.color && (
+            <p role="alert" aria-live="assertive" className="mt-1 text-xs text-feedback-error">
+              {errors.color}
+            </p>
+          )}
         </div>
-      )}
 
-      {/* ── Submit ── */}
-      <Button type="submit" variant="primary" size="lg" fullWidth loading={isSubmitting}>
-        {t('saveConfig')}
-      </Button>
-    </form>
+        {/* ── Time format ── */}
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium text-text-primary">{t('timeFormat')}</legend>
+          <div className="space-y-2">
+            {TIME_FORMATS.map((fmt) => (
+              <label key={fmt} className="flex cursor-pointer items-center gap-2.5">
+                <input
+                  type="radio"
+                  name={fId('tf')}
+                  value={fmt}
+                  checked={timeFormat === fmt}
+                  onChange={() => setTimeFormat(fmt)}
+                  className="accent-interactive-primary"
+                />
+                <span className="text-sm text-text-primary">
+                  {fmt === '24h'
+                    ? t('timeFormat24h')
+                    : fmt === '12h'
+                      ? t('timeFormat12h')
+                      : t('timeFormatMilitary')}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {/* ── Global preferences (isDefault only) ── */}
+        {isDefault && (
+          <div className="space-y-6">
+            {/* Divider */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 border-t border-border-default" />
+              <span className="text-xs font-medium uppercase tracking-wider text-text-secondary">
+                {t('globalPrefs')}
+              </span>
+              <div className="flex-1 border-t border-border-default" />
+            </div>
+
+            {/* First day of week */}
+            <fieldset>
+              <legend className="mb-2 text-sm font-medium text-text-primary">
+                {t('firstDayOfWeek')}
+              </legend>
+              <div className="space-y-2">
+                {([0, 1] as const).map((day) => (
+                  <label key={day} className="flex cursor-pointer items-center gap-2.5">
+                    <input
+                      type="radio"
+                      name={fId('fdow')}
+                      value={day}
+                      checked={localFirstDay === day}
+                      onChange={() => setLocalFirstDay(day)}
+                      className="accent-interactive-primary"
+                    />
+                    <span className="text-sm text-text-primary">
+                      {day === 0 ? t('firstDayOfWeekSunday') : t('firstDayOfWeekMonday')}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            {/* Grid line color */}
+            <div>
+              <label
+                htmlFor={fId('grid')}
+                className="mb-1.5 block text-sm font-medium text-text-primary"
+              >
+                {t('gridLineColor')}
+              </label>
+              <select
+                id={fId('grid')}
+                value={localGridColor}
+                onChange={(e) => setLocalGridColor(e.target.value)}
+                className={`${inputCls('')} cursor-pointer`}
+              >
+                {GRID_COLORS.map(({ value, key }) => (
+                  <option key={value} value={value}>
+                    {t(key)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Theme */}
+            <fieldset>
+              <legend className="mb-2 text-sm font-medium text-text-primary">{t('theme')}</legend>
+              <div className="space-y-2">
+                {(['light', 'dark'] as const).map((th) => (
+                  <label key={th} className="flex cursor-pointer items-center gap-2.5">
+                    <input
+                      type="radio"
+                      name={fId('theme')}
+                      value={th}
+                      checked={localTheme === th}
+                      onChange={() => setLocalTheme(th)}
+                      className="accent-interactive-primary"
+                    />
+                    <span className="text-sm text-text-primary">
+                      {th === 'light' ? t('themeLight') : t('themeDark')}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+        )}
+
+        {/* ── Submit ── */}
+        <Button type="submit" variant="primary" size="lg" fullWidth loading={isSubmitting}>
+          {t('saveConfig')}
+        </Button>
+      </form>
+
+      {/* Toast de confirmación — navega a /config al cerrarse */}
+      {showToast && (
+        <Toast variant="success" message={t('configSaved')} onDismiss={() => navigate('/config')} />
+      )}
+    </>
   )
 }

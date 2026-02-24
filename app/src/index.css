@@ -96,6 +96,10 @@
   /* ANIMACIONES — CONFIG ROW (menú desplegable mobile) */
   --animate-menu-expand: dod-menu-expand 100ms ease-out both;
 
+  /* ANIMACIONES — TOAST */
+  --animate-toast-enter: dod-toast-enter 200ms ease-out both;
+  --animate-toast-leave: dod-toast-leave 200ms ease-in both;
+
   /* ESPACIADO — SEMÁNTICO */
   --height-calendar-cell-mobile: 3.5rem;
   --height-calendar-cell-desktop: 5rem;
@@ -364,6 +368,26 @@
     opacity: 1;
     transform: scaleY(1);
     transform-origin: top;
+  }
+}
+
+/* Toast: slide desde abajo + fade */
+@keyframes dod-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes dod-toast-leave {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 

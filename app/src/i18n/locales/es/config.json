@@ -69,6 +69,17 @@
   "themeLight": "Claro",
   "themeDark": "Oscuro",
 
+  "confirmDeleteTitle": "¿Eliminar \"{{name}}\"?",
+  "confirmDeleteBody": "Esta acción no se puede deshacer.",
+  "confirmDeleteBtn": "Sí, eliminar",
+
+  "makeDefaultTitle": "Cambiar turno principal",
+  "makeDefaultBody": "\"{{name}}\" se convertirá en tu turno principal.",
+  "makeDefaultBody2": "\"{{current}}\" pasará a ser un turno adicional. ¿Con qué nombre?",
+  "makeDefaultNameLabel": "Nombre para tu turno anterior",
+  "makeDefaultHelper": "Puedes cambiarlo si prefieres",
+  "makeDefaultBtn": "Confirmar cambio",
+
   "menuLabel": "Opciones de {{name}}",
   "badgePrincipal": "Principal",
   "menuEdit": "Editar",
