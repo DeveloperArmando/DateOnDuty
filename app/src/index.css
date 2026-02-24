@@ -90,6 +90,9 @@
   --animate-panel-enter-top: dod-panel-enter-top 100ms ease-in-out both;
   --animate-panel-enter-bottom: dod-panel-enter-bottom 100ms ease-in-out both;
 
+  /* ANIMACIONES — FORMULARIO (campos condicionales) */
+  --animate-field-appear: dod-field-appear 100ms ease-out both;
+
   /* ESPACIADO — SEMÁNTICO */
   --height-calendar-cell-mobile: 3.5rem;
   --height-calendar-cell-desktop: 5rem;
@@ -328,6 +331,18 @@
   from {
     opacity: 0;
     transform: translateY(8%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Formulario: campos condicionales — fade + slide desde arriba */
+@keyframes dod-field-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;

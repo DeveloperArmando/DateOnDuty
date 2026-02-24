@@ -47,6 +47,28 @@
   },
   "colorContrastWarning": "Este color puede tener poco contraste sobre el fondo. Se recomienda uno más oscuro.",
 
+  "currentlyOnRest": "¿Estás actualmente en franco?",
+  "currentlyOnRestNo": "No (en turno)",
+  "currentlyOnRestYes": "Sí (en descanso)",
+  "nextShiftStart": "Tu próximo inicio de turno",
+  "francoToday": "Hoy",
+  "francoTomorrow": "Mañana",
+  "franco2Days": "Pasado mañana",
+  "franco3Days": "En 3 días",
+  "workHoursHelper": "Entre 12 y 72 horas",
+
+  "globalPrefs": "Preferencias globales",
+  "firstDayOfWeek": "Primer día de la semana",
+  "firstDayOfWeekSunday": "Domingo (por defecto)",
+  "firstDayOfWeekMonday": "Lunes",
+  "gridLineColor": "Color de líneas del calendario",
+  "gridColorLight": "Gris claro (por defecto)",
+  "gridColorMedium": "Gris medio",
+  "gridColorDark": "Gris oscuro",
+  "theme": "Tema de la aplicación",
+  "themeLight": "Claro",
+  "themeDark": "Oscuro",
+
   "colorPicker": {
     "changeColor": "Cambiar color",
     "currentColor": "Color actual: {{color}}. Abrir selector de color",
