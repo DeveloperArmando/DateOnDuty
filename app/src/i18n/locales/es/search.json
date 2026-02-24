@@ -4,5 +4,12 @@
   "searchButton": "Consultar",
   "resultTitle": "Resultado para {{date}}",
   "noActiveConfigs": "No tienes turnos activos configurados.",
-  "goToConfig": "Configurar mis turnos"
+  "goToConfig": "Configurar mis turnos",
+  "sectionMyShift": "Mi turno",
+  "sectionAdditionals": "Turnos adicionales",
+  "statusEntry": "Entrada a las {{time}}",
+  "statusExit": "Salida a las {{time}}",
+  "statusOnDuty": "En turno",
+  "statusOffDuty": "Franco",
+  "viewInCalendar": "Ver {{month}} {{year}} en el calendario"
 }

@@ -19,6 +19,8 @@ interface UIStore {
   setExpandedDay: (date: string | null) => void
   /** Activa/desactiva el overlay de ayuda. */
   toggleHelp: () => void
+  /** Salta directamente a un mes y año concretos (usado desde Search). */
+  setViewDate: (year: number, month: number) => void
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -50,5 +52,7 @@ export const useUIStore = create<UIStore>()((set) => {
     setExpandedDay: (expandedDay) => set({ expandedDay }),
 
     toggleHelp: () => set((state) => ({ helpActive: !state.helpActive })),
+
+    setViewDate: (year, month) => set({ currentYear: year, currentMonth: month }),
   }
 })
