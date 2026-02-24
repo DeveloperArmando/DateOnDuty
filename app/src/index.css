@@ -93,6 +93,9 @@
   /* ANIMACIONES — FORMULARIO (campos condicionales) */
   --animate-field-appear: dod-field-appear 100ms ease-out both;
 
+  /* ANIMACIONES — CONFIG ROW (menú desplegable mobile) */
+  --animate-menu-expand: dod-menu-expand 100ms ease-out both;
+
   /* ESPACIADO — SEMÁNTICO */
   --height-calendar-cell-mobile: 3.5rem;
   --height-calendar-cell-desktop: 5rem;
@@ -347,6 +350,20 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Config Row: menú mobile — scale desde arriba */
+@keyframes dod-menu-expand {
+  from {
+    opacity: 0;
+    transform: scaleY(0.95);
+    transform-origin: top;
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top;
   }
 }
 

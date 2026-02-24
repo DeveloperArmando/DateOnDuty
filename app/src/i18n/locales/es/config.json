@@ -69,6 +69,12 @@
   "themeLight": "Claro",
   "themeDark": "Oscuro",
 
+  "menuLabel": "Opciones de {{name}}",
+  "badgePrincipal": "Principal",
+  "menuEdit": "Editar",
+  "menuMakeDefault": "Hacer turno principal",
+  "menuDelete": "Eliminar",
+
   "colorPicker": {
     "changeColor": "Cambiar color",
     "currentColor": "Color actual: {{color}}. Abrir selector de color",
