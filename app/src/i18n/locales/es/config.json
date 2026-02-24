@@ -45,5 +45,17 @@
     "workHoursRange": "Las horas de trabajo deben estar entre 12 y 72.",
     "restHoursRange": "Las horas de descanso deben estar entre 12 y 72."
   },
-  "colorContrastWarning": "Este color puede tener poco contraste sobre el fondo. Se recomienda uno más oscuro."
+  "colorContrastWarning": "Este color puede tener poco contraste sobre el fondo. Se recomienda uno más oscuro.",
+
+  "colorPicker": {
+    "changeColor": "Cambiar color",
+    "currentColor": "Color actual: {{color}}. Abrir selector de color",
+    "presetColors": "Colores predeterminados",
+    "presetColor": "Color {{color}}",
+    "colorInUse": "Ya en uso",
+    "hexLabel": "Código de color hexadecimal",
+    "hexPlaceholder": "#000000",
+    "browserUnsupported": "Tu navegador no soporta el selector de color. Elige un color de la paleta o ingresa un código hex.",
+    "contrastRatio": "Contraste: {{ratio}}:1. Mínimo recomendado: 4.5:1"
+  }
 }
