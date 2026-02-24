@@ -21,6 +21,9 @@ interface UIStore {
   toggleHelp: () => void
   /** Salta directamente a un mes y año concretos (usado desde Search). */
   setViewDate: (year: number, month: number) => void
+  /** Marca el inicio del onboarding para que el timer de ConfigBanner sobreviva navegaciones. */
+  onboardingStartTime: number | null
+  setOnboardingStartTime: (time: number) => void
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -34,6 +37,7 @@ export const useUIStore = create<UIStore>()((set) => {
     currentYear: now.getFullYear(),
     expandedDay: null,
     helpActive: false,
+    onboardingStartTime: null,
 
     navigateMonth: (delta) =>
       set((state) => {
@@ -54,5 +58,7 @@ export const useUIStore = create<UIStore>()((set) => {
     toggleHelp: () => set((state) => ({ helpActive: !state.helpActive })),
 
     setViewDate: (year, month) => set({ currentYear: year, currentMonth: month }),
+
+    setOnboardingStartTime: (time) => set({ onboardingStartTime: time }),
   }
 })

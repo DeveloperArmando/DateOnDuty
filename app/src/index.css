@@ -100,6 +100,14 @@
   --animate-toast-enter: dod-toast-enter 200ms ease-out both;
   --animate-toast-leave: dod-toast-leave 200ms ease-in both;
 
+  /* ANIMACIONES — ONBOARDING */
+  --animate-swipe-card-enter: dod-swipe-card-enter 300ms ease-out both;
+  --animate-swipe-card-leave: dod-swipe-card-leave 500ms ease-in both;
+  --animate-swipe-cursor-v: dod-swipe-cursor-v 7500ms linear both;
+  --animate-swipe-cursor-h: dod-swipe-cursor-h 7500ms linear both;
+  --animate-banner-enter: dod-banner-enter 250ms ease-out both;
+  --animate-banner-leave: dod-banner-leave 250ms ease-in both;
+
   /* ESPACIADO — SEMÁNTICO */
   --height-calendar-cell-mobile: 3.5rem;
   --height-calendar-cell-desktop: 5rem;
@@ -388,6 +396,108 @@
   }
   to {
     opacity: 0;
+  }
+}
+
+/* SwipeAnimation: entrada y salida del card */
+@keyframes dod-swipe-card-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes dod-swipe-card-leave {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* SwipeAnimation: cursores — timeline de 7500ms como porcentajes
+   Cursor vertical: activo en fase 1 (0–2s) y fase 3 (5–7s)
+   Cursor horizontal: activo en fase 2 (2.5–4.5s) */
+@keyframes dod-swipe-cursor-v {
+  0% {
+    top: 0;
+    opacity: 1;
+  }
+  26.7% {
+    top: calc(100% - 8px);
+    opacity: 1;
+  }
+  33.2% {
+    top: 0;
+    opacity: 0;
+  }
+  66.6% {
+    top: 0;
+    opacity: 0;
+  }
+  66.7% {
+    top: 0;
+    opacity: 1;
+  }
+  93.3% {
+    top: calc(100% - 8px);
+    opacity: 1;
+  }
+  100% {
+    top: 0;
+    opacity: 0;
+  }
+}
+@keyframes dod-swipe-cursor-h {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  33.3% {
+    left: 0;
+    opacity: 0;
+  }
+  33.4% {
+    left: 0;
+    opacity: 1;
+  }
+  60% {
+    left: calc(100% - 8px);
+    opacity: 1;
+  }
+  66.6% {
+    left: 0;
+    opacity: 0;
+  }
+  100% {
+    left: 0;
+    opacity: 0;
+  }
+}
+
+/* ConfigBanner: entrada (slide-down) y salida (slide-up) */
+@keyframes dod-banner-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes dod-banner-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
   }
 }
 
