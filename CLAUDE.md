@@ -11,7 +11,7 @@ The project is in **implementation phase**. Design system is complete. Core Engi
 The authoritative references are:
 - `docs/DateOnDuty_PRD_v2.md` — product requirements and user stories
 - `docs/DateOnDuty_Architecture_v1.md` — stack decisions, architecture rules, data schemas, and algorithm details
-- `docs/DOD_DECISIONS_LOG.md` — all product and architecture decisions already taken (read before proposing changes)
+- `docs/DOD_DECISIONS_LOG.md` — all product and architecture decisions already taken (read before proposing changes; **add every new decision here immediately**, using the format defined at the top of that file)
 - `docs/DOD_EDGE_CASES.md` — resolved edge cases and behavioral rules per epic (validation limits, color rules, onboarding timing, etc.)
 - `docs/design/design-tokens.md` — CSS custom properties, Tailwind theme extension, color semantics
 - `docs/design/animation-specs.md` — all animation/transition specs (durations, easings, keyframes). Source of truth over any component spec.

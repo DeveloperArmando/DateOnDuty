@@ -1,95 +1,305 @@
 # DateOnDuty — Decisions Log
 
-Formato de cada entrada: **Fecha | Rol | Decisión | Razonamiento | Impacto en otros agentes**
+**Proyecto:** DateOnDuty
+**Última actualización:** Febrero 2026
+**Propósito:** Registro único de todas las decisiones del proyecto. Cualquier agente o persona que vaya a implementar algo debe leer este archivo antes de proponer alternativas — las decisiones aquí documentadas **no se reabren sin justificación explícita del Product Owner**.
 
 ---
 
-## Decisiones de Producto (Product Owner)
+## CÓMO AÑADIR UNA DECISIÓN
 
-| Fecha | Rol | Decisión | Razonamiento | Impacto en otros agentes |
-|---|---|---|---|---|
-| Feb 2026 | PO | MVP es frontend-only, sin backend. localStorage como única persistencia. | Velocidad de lanzamiento. El usuario no necesita cuenta para el valor central del producto. | Arquitecto: sin API layer. Developer: sin fetch excepto Formspree. |
-| Feb 2026 | PO | Plataforma: web responsive únicamente. PWA, Android e iOS movidos a v3.0. | Reducir alcance del MVP. Navegador cubre >95% del caso de uso inmediato. | UX/UI: mobile-first pero sin manifest ni service worker. |
-| Feb 2026 | PO | Autenticación movida a v2.0. El MVP no requiere registro para ninguna función. | El valor del producto (consultar turnos) no requiere identidad. Reducir fricción de adopción. | UX/UI: sin pantallas de login/registro. Developer: sin auth guards. |
-| Feb 2026 | PO | Compartir configuración via URL con parámetro `?cfg=` en Base64. Sin backend. | Permite compartir sin cuenta ni servidor. Limitación aceptada: el link es estático. | Arquitecto: encoder/decoder en Core Engine. UX/UI: modal de importación en `/`. |
-| Feb 2026 | PO | Esquemas predeterminados: 24x48, 12x36, 48x48. Personalizado: 12–72h trabajo, 12–72h descanso, solo enteros. | Cubren >90% de los esquemas reales en México/LATAM. Personalizado cubre el resto. | UX/UI: selector de esquema con 3 opciones + modo personalizado. |
-| Feb 2026 | PO | Máximo 10 configuraciones adicionales (+ 1 default = 11 total). | Límite razonable para localStorage y visualización en calendario. | Developer: validar en store. UX/UI: estado de límite alcanzado. |
-| Feb 2026 | PO | La configuración default no puede eliminarse ni desactivarse. Siempre es "Mi turno". | Siempre debe existir al menos una configuración activa. Simplifica lógica de estados vacíos. | Developer: validar en store. UX/UI: no mostrar controles de eliminar/desactivar en default. |
-| Feb 2026 | PO | Feedback vía Formspree en MVP. Cooldown de 1 minuto entre envíos. | Sin backend propio. Formspree cubre el caso de uso sin infraestructura. | Developer: VITE_FORMSPREE_ID como env var. UX/UI: estado de cooldown con countdown. |
-| Feb 2026 | PO | Onboarding: animación + banner simultáneos, 50 segundos, flag guardado al completarse (no al aparecer). | No bloquear el uso inmediato. Si el usuario cierra antes de 50s, se repite. | UX/UI: diseñar para convivencia simultánea de animación y banner. Developer: setTimeout de 50s con cleanup. |
-| Feb 2026 | PO | Páginas legales (Términos + Privacidad) son bloqueantes para lanzamiento (US-014). | Requisito legal mínimo para operar en México (LFPDPPP). | UX/UI: contemplar footer con links legales en todas las pantallas. |
-| Feb 2026 | PO | Cálculos en horas absolutas. Sin ajuste por horario de verano en MVP. | Simplicidad. DST afecta a <1% de los cálculos y el error es de 1 hora. Documentado como limitación conocida. | Arquitecto: la firma del Core Engine debe permitir `timezone?` como parámetro futuro. |
-| Feb 2026 | PO | Primer día de la semana: domingo por defecto, configurable a lunes. Solo esas dos opciones. | Domingo es el estándar en México. Lunes cubre preferencias regionales de LATAM. | UX/UI: toggle domingo/lunes en configuración. |
+Añadir al final de la sección correspondiente. Formato obligatorio:
+
+```
+### D-XXX — Título corto
+**Decisión:** Qué se decidió.
+**Alternativas:** Qué más se evaluó (puede ser "ninguna documentada").
+**Razón:** Por qué se eligió esta opción.
+**Consecuencias:** Qué implica para implementación, diseño u otros agentes.
+```
+
+Incrementar el número de la última entrada. No reordenar entradas existentes.
 
 ---
 
-## Decisiones de Arquitectura (Arquitecto de Software)
+## SECCIÓN 1 — Producto y Negocio
 
-| Fecha | Rol | Decisión | Razonamiento | Impacto en otros agentes |
-|---|---|---|---|---|
-| Feb 2026 | Arquitecto | Stack frontend: React 19 + TypeScript 5 + Vite 6. | LLM-friendliness como criterio dominante. React tiene el mayor corpus de entrenamiento. Vite es build tool nativo para SPA sin complejidad de SSR. | Developer: todo el código en React + TS estricto. |
-| Feb 2026 | Arquitecto | Estilos: Tailwind CSS 4. Dark mode via clase `dark` en `<html>`. | Utility-first simplifica generación de UI por IA. Dark mode integrado sin CSS custom. | UX/UI: specs en clases Tailwind. Colores de turno dinámicos van en `style` inline, no en clases Tailwind. |
-| Feb 2026 | Arquitecto | Estado global: Zustand 5 con middleware `persist`. | API mínima. Sin boilerplate. Persist integrado para localStorage. Redux es excesivo para la complejidad del MVP. | Developer: tres stores independientes: config-store, theme-store, ui-store. |
-| Feb 2026 | Arquitecto | Fechas: date-fns 4 (imports individuales). Prohibido Moment, dayjs, Luxon. | Tree-shakeable. Funciones puras. Soporte de locales para i18n futuro. | Developer: `import { addMonths } from "date-fns"`, nunca `import * as`. |
-| Feb 2026 | Arquitecto | Routing: React Router 7 con `createBrowserRouter`. | Estándar para SPA. Necesario para `useSearchParams` (parámetro `?cfg=`). | UX/UI: 7 rutas + 4 overlays definidos. Developer: lazy load en todas las rutas excepto `/`. |
-| Feb 2026 | Arquitecto | i18n: react-i18next. Solo locale `es` en MVP. | Permite preparar arquitectura de textos sin implementar múltiples idiomas. Cero strings hardcodeados en JSX. | Developer: 6 namespaces JSON en `src/i18n/locales/es/`. UX/UI: los textos en specs son las keys de traducción. |
-| Feb 2026 | Arquitecto | Gestos: @use-gesture/react. Umbral: 50px + velocidad 0.3. | Librería ligera, bien documentada, compatible con React 19. | UX/UI: diseñar controles de botón como alternativa a gestos para desktop/accesibilidad. |
-| Feb 2026 | Arquitecto | Testing: Vitest + React Testing Library. Sin Jest, sin Cypress en MVP. | Integración nativa con Vite. Testing orientado a comportamiento de usuario. E2E se agrega en v2.0. | Developer: cada archivo en `core/` tiene su `.test.ts` al lado. |
-| Feb 2026 | Arquitecto | Patrón arquitectónico: SPA monolítica con Feature-Sliced (feature slices). Tres capas: UI → State → Core. | Simplicidad suficiente para MVP. El Core Engine es puro (sin React, sin DOM, sin localStorage). | Developer: los componentes no calculan turnos directamente; pasan por el store que invoca al Core. |
-| Feb 2026 | Arquitecto | localStorage: 4 keys con prefijo `dod-`. `dod-configs`, `dod-preferences`, `dod-onboarding`, `dod-feedback-cooldown`. | Prefijo evita colisiones. Separación por dominio de datos. | Developer: `dod-onboarding` y `dod-feedback-cooldown` se leen/escriben directo, no via Zustand persist. |
-| Feb 2026 | Arquitecto | URL sharing: `btoa(JSON.stringify({ s, e, d, c }))`. Parámetro `?cfg=`. Custom scheme: `"C{work}:{rest}"`. | Base64 nativo del navegador. Payload mínimo (~100 chars). Opaco por diseño. | Developer: validar TODOS los campos al decodificar con try/catch. UX/UI: modal de importación en `/`. |
-| Feb 2026 | Arquitecto | Iconos: exclusivamente `lucide-react`. | Tree-shakeable. Consistente. Compatible con Tailwind. | UX/UI: no usar Font Awesome ni SVGs externos. |
-| Feb 2026 | Arquitecto | Seguridad: sin `dangerouslySetInnerHTML`. Colores hex validados con `/^#[0-9A-Fa-f]{6}$/`. | Prevenir XSS. Los colores del usuario se aplican al DOM vía `style` inline. | Developer: validar colores antes de aplicar. `VITE_FORMSPREE_ID` como variable de entorno en Cloudflare Pages. |
-| Feb 2026 | Arquitecto | Hosting: Cloudflare Pages. Deploy automático desde `main`. Variables de entorno configuradas en Cloudflare, no en el repo. | Sitio estático. CDN global. Integración nativa con GitHub. | DevOps: pipeline CI: lint → format:check → typecheck → test antes de merge. |
-| Feb 2026 | Arquitecto | Algoritmo de turno: aritmética de módulo. `moduloPositivo(a,b) = ((a % b) + b) % b`. Sin iteración desde el origen. | O(1) para cualquier fecha, sin importar distancia temporal. Soporta fechas antes del origen. | Developer: función pura en `core/shift-calculator/shift-calculator.ts`. |
+### D-001 — MVP sin backend
+**Decisión:** v1.0 es frontend puro. Sin servidor, sin base de datos, sin autenticación.
+**Alternativas:** Firebase, Supabase, backend propio Express/Node.
+**Razón:** Reduce tiempo de lanzamiento. El valor central (cálculo de turnos) no requiere persistencia en nube. Minimiza costos operativos en la etapa de validación de mercado.
+**Consecuencias:** Todo vive en localStorage. Al borrar caché se pierden los datos. La sincronización entre dispositivos llega en v2.0.
 
 ---
 
-## Decisiones de Proceso (Claude Code / Sesión actual)
-
-| Fecha | Rol | Decisión | Razonamiento | Impacto en otros agentes |
-|---|---|---|---|---|
-| Feb 2026 | Claude Code | Creado `CLAUDE.md` en raíz del proyecto como guía de contexto para instancias futuras de Claude Code. | El proyecto usa agentes de IA como equipo principal. El CLAUDE.md reduce el tiempo de onboarding de cada sesión. | Todos los agentes: leer CLAUDE.md y este log al inicio de cada sesión. |
-| Feb 2026 | Claude Code | Creado `DOD_DECISIONS_LOG.md` con regla de actualización inmediata (no al final de sesión) y formato de handoff. | Garantizar continuidad de contexto entre agentes y sesiones. | Todos los agentes: actualizar este log antes de hacer handoff. |
+### D-002 — Compartir configuración por URL (sin cuenta)
+**Decisión:** El mecanismo de compartir codifica los datos en la URL con Base64 (`?cfg=`). Payload: `{ s, e, d, c }`. Sin backend, sin short URLs, sin QR.
+**Alternativas:** Firebase Dynamic Links, short URL con backend, QR code.
+**Razón:** Coherente con el principio de "sin backend en MVP". Zero dependencias externas adicionales. `btoa`/`atob` son nativos del navegador.
+**Consecuencias:** El link es estático (no refleja cambios posteriores). Solo se comparte una configuración a la vez. Validar TODOS los campos al decodificar con try/catch. Limpiar URL con `navigate("/", { replace: true })` tras procesar.
 
 ---
 
-## Handoff para UX/UI Designer
+### D-003 — Onboarding: flag guardado al terminar, no al ver
+**Decisión:** El flag de onboarding se guarda en localStorage después de 50 segundos de permanencia, no cuando aparece. Si el usuario cierra antes, se muestra de nuevo.
+**Alternativas:** Guardar al aparecer, guardar al hacer click en cualquier lugar.
+**Razón:** El objetivo del onboarding es que el usuario *vea* los gestos. Guardarlo al aparecer frustraría ese objetivo si el usuario cierra inmediatamente.
+**Consecuencias:** Implementar con `setTimeout` de 50s + cleanup en `useEffect` para no guardar si el componente se desmonta antes.
 
-**Fecha:** Feb 2026
-**De:** Claude Code (sesión de planificación inicial)
-**Para:** Agente UX/UI Designer
+---
 
-### Estado del proyecto al momento del handoff
+### D-004 — Cooldown de feedback: client-side, se resetea al recargar
+**Decisión:** El cooldown de 1 minuto entre envíos de feedback se guarda en localStorage y se pierde al recargar.
+**Alternativas:** Cooldown persistente que sobreviva recargas, cooldown en servidor.
+**Razón:** El cooldown es una medida de UX (evitar spam accidental), no de seguridad. Formspree tiene sus propias protecciones anti-spam. Implementar un cooldown resistente agrega complejidad sin beneficio real en MVP.
+**Consecuencias:** Un usuario puede saltear el cooldown recargando la página. Limitación conocida y aceptada.
 
-El proyecto tiene definidos y aprobados:
-- **PRD v2.0** (`docs/DateOnDuty_PRD_v2.md`) — requisitos completos con user stories, criterios de aceptación y casos edge para todas las épicas.
-- **Arquitectura v1.0** (`docs/DateOnDuty_Architecture_v1.md`) — stack, estructura de proyecto, esquema de datos, algoritmo de turno, reglas de UI (RG-001 a RG-007).
-- **CLAUDE.md** (raíz) — reglas consolidadas para agentes de implementación.
-- **DOD_DECISIONS_LOG.md** (este archivo) — historial de decisiones.
+---
 
-**No existe aún:** ningún archivo de código, ningún design system, ningún wireframe.
+### D-005 — Configuración default: no se puede eliminar ni desactivar
+**Decisión:** La configuración default ("Mi turno") siempre existe y siempre está activa.
+**Alternativas:** Permitir eliminar si hay otra configuración activa.
+**Razón:** Simplifica la lógica de la app (siempre hay al menos una config activa). Evita el estado vacío de "sin configuraciones activas" que complicaría el calendario.
+**Consecuencias:** El usuario siempre ve al menos un turno en el calendario. No mostrar controles de eliminar/desactivar en la config default. Para "limpiar" la app debe modificar la config default, no eliminarla.
 
-### Lo que el UX/UI Designer debe entregar primero
+---
 
-Seguir el orden recomendado en `agents/AGENTE UXUI DESIGNER.md`:
-1. **Design system** (tokens: colores light/dark, tipografía, espaciado, radios, sombras, transiciones) — formato: CSS custom properties + extensión Tailwind config.
-2. **Calendario principal** (`/`) — pantalla más compleja y de mayor uso. Incluir: estado sin configuración (primera vez), estado con 1 config activa, estado con múltiples configs, estado con configs desbordadas en día.
-3. Continuar en el orden definido en el agente.
+### D-006 — Hora de entrada: solo horas completas o medias horas
+**Decisión:** `entryTime` acepta únicamente valores como `08:00` o `08:30`. No se permiten `08:15`, `08:45`, etc.
+**Alternativas:** Cualquier hora con granularidad de 5 minutos, solo horas completas.
+**Razón:** Los turnos industriales en México/LATAM típicamente inician a horas o medias horas. Simplifica el input y reduce errores de configuración.
+**Consecuencias:** Validar en el formulario de config. Granularidad de 30 minutos es suficiente para el 99% de los casos de uso. Usuarios con turnos en cuartos de hora no pueden configurarlos exactamente — limitación documentada.
 
-### Restricciones que el UX/UI Designer debe tener presentes
+---
 
-- Los colores de turno son **siempre dinámicos** (elegidos por el usuario). No proponer colores fijos para turnos. El diseño debe funcionar con cualquier hex.
-- Dark mode: clase `dark` en `<html>`. **El usuario lo activa manualmente.** Default: modo claro. Sin detección automática de preferencia del sistema.
-- Iconos: **solo `lucide-react`**.
-- Gestos de swipe (vertical = meses, horizontal = años) deben tener **equivalente en botones** para desktop y accesibilidad.
-- Colores de turno van en `style` inline, **no en clases Tailwind dinámicas**.
-- La configuración default (Mi turno) no tiene controles de eliminar ni desactivar en la UI.
-- El onboarding (animación + banner) son **simultáneos** y duran 50 segundos. No se muestran dos veces si el usuario esperó los 50 segundos.
+### D-007 — Horas absolutas para cálculo de turnos (sin zonas horarias en MVP)
+**Decisión:** El cálculo de turnos usa horas nominales (1 día = 24 horas siempre). No se consulta la zona horaria del dispositivo ni se ajusta por horario de verano.
+**Alternativas:** Usar `Intl.DateTimeFormat` y `Date.getTimezoneOffset()` para ajustar.
+**Razón:** El 99% de los trabajadores objetivo están en la misma zona horaria. Los esquemas de turno (24h, 48h) son en horas nominales, no en horas de reloj. El soporte de zonas horarias se agrega en v3.0 sin romper la interfaz del Core Engine.
+**Consecuencias:** Calcular con fechas UTC en el Core Engine (`new Date(\`${date}T${time}:00Z\``). En días con cambio de horario, el cálculo puede diferir en 1 hora — riesgo bajo y aceptado.
 
-### Preguntas abiertas que el UX/UI Designer debe definir
+---
 
-1. ¿Qué animación usa el onboarding para ilustrar los gestos de swipe? (El comportamiento de desaparición de la animación es responsabilidad del UX/UI según el PRD.)
-2. ¿Cómo se visualiza el gradiente de color en los días del calendario? (El PRD especifica "más intenso al inicio del bloque, más tenue al final", pero la implementación visual exacta queda al criterio del diseñador.)
-3. ¿Cuántas configuraciones caben visualmente en un bloque de día en mobile 360px antes de mostrar el indicador de desbordamiento?
-4. ¿Cuál es la paleta predeterminada de colores para configuraciones de turno? (El usuario puede cambiarla, pero debe haber un set de colores iniciales bien contrastados para light y dark mode.)
+### D-022 — Plataforma: web responsive únicamente
+**Decisión:** MVP es una web app responsive. Sin PWA, sin app nativa Android/iOS.
+**Alternativas:** PWA con manifest + service worker, React Native.
+**Razón:** Reducir alcance del MVP. El navegador cubre >95% del caso de uso inmediato.
+**Consecuencias:** UX/UI: mobile-first pero sin manifest ni service worker. Sin instalación desde tiendas. PWA/native movidos a v3.0.
+
+---
+
+### D-023 — Autenticación movida a v2.0
+**Decisión:** El MVP no requiere registro ni login para ninguna función.
+**Alternativas:** Auth desde v1.0 para sincronización entre dispositivos.
+**Razón:** El valor central del producto (consultar turnos) no requiere identidad. Reducir fricción de adopción en etapa de validación.
+**Consecuencias:** Sin pantallas de login/registro. Sin auth guards en rutas. Sin sesiones. La sincronización entre dispositivos llega con la cuenta en v2.0.
+
+---
+
+### D-024 — Esquemas de turno predeterminados y límites
+**Decisión:** Tres presets: 24x48, 12x36, 48x48. Esquema personalizado: mínimo 12h, máximo 72h para trabajo y descanso. Solo números enteros.
+**Alternativas:** Rango libre sin límite, granularidad de 0.5h.
+**Razón:** Los tres presets cubren >90% de los esquemas reales en México/LATAM. Los límites (12–72h) evitan configuraciones absurdas sin restringir casos legítimos.
+**Consecuencias:** Validar en formulario de config. Rechazar decimales. `custom` scheme almacenado como `{ type: "custom", workHours: number, restHours: number }`.
+
+---
+
+### D-025 — Límite de 10 configuraciones adicionales
+**Decisión:** Máximo 10 configuraciones adicionales (+ 1 default = 11 total).
+**Alternativas:** Sin límite, límite de 5.
+**Razón:** Límite razonable para localStorage y para la visualización en el calendario. Más de 10 adicionales degradaría la legibilidad visual.
+**Consecuencias:** Validar en el store al agregar. UX/UI: mostrar estado de límite alcanzado. CE-51 define el comportamiento al recibir un link cuando el límite está lleno.
+
+---
+
+### D-026 — Páginas legales: bloqueantes para lanzamiento
+**Decisión:** Términos y Condiciones + Política de Privacidad son requisitos de lanzamiento (US-014). Sin ellas no se publica.
+**Alternativas:** Publicar sin legales y agregar después.
+**Razón:** Requisito legal mínimo para operar en México (LFPDPPP). El riesgo regulatorio supera el beneficio de lanzar antes.
+**Consecuencias:** Footer con links legales en todas las pantallas. Rutas `/terms` y `/privacy` deben existir antes del deploy a producción.
+
+---
+
+### D-027 — Primer día de la semana: domingo por defecto, configurable a lunes
+**Decisión:** El calendario inicia en domingo por defecto. El usuario puede cambiarlo a lunes. Solo esas dos opciones.
+**Alternativas:** Detectar configuración del sistema operativo, soportar cualquier día.
+**Razón:** Domingo es el estándar en México. Lunes cubre preferencias regionales de LATAM. Soportar otros días no agrega valor para el mercado objetivo.
+**Consecuencias:** Guardado en `dod-preferences` vía `theme-store`. UX/UI: toggle domingo/lunes en configuración de preferencias.
+
+---
+
+## SECCIÓN 2 — Arquitectura Técnica
+
+### D-008 — React sobre Angular
+**Decisión:** Frontend en React 19 con TypeScript.
+**Alternativas:** Angular (experiencia del equipo humano), Vue 3, Svelte.
+**Razón:** El desarrollo es realizado principalmente por agentes de IA (Claude). El criterio dominante es LLM-friendliness: React tiene el mayor corpus de entrenamiento, Claude genera React con mayor precisión y consistencia que Angular.
+**Consecuencias:** El equipo humano (con experiencia en Angular) tendrá una curva de aprendizaje, pero el código generado por IA será más limpio y consistente.
+
+---
+
+### D-009 — Vite sobre Next.js
+**Decisión:** Build tool: Vite 6. Sin Next.js ni ningún framework con SSR.
+**Alternativas:** Next.js (popular en React), Create React App (deprecado).
+**Razón:** DateOnDuty es un SPA frontend puro. Next.js introduce Server Components, hydration y complejidad de servidor innecesaria para este caso de uso.
+**Consecuencias:** Sin SSR, sin SSG, sin API routes. Todo en el cliente. Deploy como sitio estático en Cloudflare Pages.
+
+---
+
+### D-010 — Zustand sobre Redux
+**Decisión:** Estado global con Zustand 5 y middleware `persist`.
+**Alternativas:** Redux Toolkit, MobX, Jotai, Context API puro.
+**Razón:** Zustand tiene API mínima (menos boilerplate = menos superficie de error para IA). El middleware `persist` integra localStorage sin código adicional.
+**Consecuencias:** Tres stores: `config-store` (persist), `theme-store` (persist), `ui-store` (sin persist). La lógica de negocio vive en el Core Engine, no en los stores.
+
+---
+
+### D-011 — Arquitectura en capas: UI / State / Core Engine
+**Decisión:** Tres capas con dependencia unidireccional: UI (React) → State (Zustand) → Core (funciones puras).
+**Alternativas:** Lógica directamente en componentes, fat stores con lógica de negocio.
+**Razón:** El Core Engine (cálculo de turnos, encoding, validaciones) debe ser testeable de forma aislada sin React ni localStorage. Funciones puras son predecibles y fáciles de testear.
+**Consecuencias:** El Core Engine en `src/core/` no importa React, Zustand, ni accede al DOM. Cada archivo en `core/` tiene su `.test.ts`.
+
+---
+
+### D-012 — localStorage con prefijo `dod-` y cuatro keys
+**Decisión:** Cuatro keys fijas: `dod-configs`, `dod-preferences`, `dod-onboarding`, `dod-feedback-cooldown`.
+**Alternativas:** Una sola key con todo el estado, keys sin prefijo.
+**Razón:** El prefijo `dod-` evita colisiones con otros sitios en el mismo dominio. Separar en cuatro keys permite hidratar cada store de Zustand de forma independiente.
+**Consecuencias:** `dod-onboarding` y `dod-feedback-cooldown` se leen/escriben directamente, no vía Zustand persist. Cualquier nueva key en v2.0 debe mantener el prefijo `dod-`.
+
+---
+
+### D-013 — Evento `storage` sobre BroadcastChannel para múltiples pestañas
+**Decisión:** Detección de cambios entre pestañas vía evento nativo `window.storage`.
+**Alternativas:** BroadcastChannel API (más potente, bidireccional).
+**Razón:** El evento `storage` cubre exactamente el caso de uso: detectar que otra pestaña escribió en localStorage. BroadcastChannel es innecesario y agrega complejidad.
+**Consecuencias:** El listener reacciona solo a keys con prefijo `dod-`. La recarga de datos usa los métodos de rehidratación de Zustand.
+
+---
+
+### D-014 — Dark mode: clase en `<html>`, no media query
+**Decisión:** Dark mode se controla con la clase `dark` en el elemento `<html>`. El usuario lo activa manualmente. Default: modo claro.
+**Alternativas:** `prefers-color-scheme` media query (automático por preferencia del sistema).
+**Razón:** El PRD especifica que el usuario elige manualmente. Permite control explícito y predecible.
+**Consecuencias:** La app siempre abre en modo claro sin importar la configuración del sistema. La preferencia del usuario se guarda en `dod-preferences` vía Zustand persist.
+
+---
+
+### D-015 — Colores de turno: `style` inline, no clases Tailwind
+**Decisión:** Los colores de turno elegidos por el usuario se aplican vía `style={{ backgroundColor: color }}`, nunca como clases Tailwind.
+**Alternativas:** Generar clases Tailwind dinámicamente, CSS custom properties por componente.
+**Razón:** Tailwind no puede generar clases dinámicas en tiempo de ejecución (JIT purga las clases no usadas en build). El color del turno es un valor hex elegido en runtime, imposible de anticipar en build time.
+**Consecuencias:** Los colores de turno no participan del design system de Tailwind. Se validan con regex `/^#[0-9A-Fa-f]{6}$/` antes de aplicarse al DOM para prevenir XSS.
+
+---
+
+### D-016 — Iconos: solo `lucide-react`
+**Decisión:** La única librería de iconos permitida es `lucide-react`.
+**Alternativas:** Font Awesome, Material Icons, Heroicons, SVGs inline customizados.
+**Razón:** `lucide-react` es tree-shakeable, tiene estilo consistente y es el estándar de facto en el ecosistema Tailwind/React.
+**Consecuencias:** Si un ícono específico no existe en `lucide-react`, buscar el más cercano o crear un SVG inline como excepción documentada.
+
+---
+
+### D-017 — Animaciones CSS nativas (sin Framer Motion)
+**Decisión:** Todas las animaciones se implementan con CSS transitions y CSS animations nativas. Sin Framer Motion, React Spring ni ninguna librería de animación.
+**Alternativas:** Framer Motion (estándar en el ecosistema React para animaciones complejas).
+**Razón:** Las animaciones del MVP son suficientemente simples para CSS nativo. Framer Motion agrega ~50KB al bundle.
+**Consecuencias:** Las animaciones más complejas requieren más trabajo manual en CSS. Specs completas en `docs/design/animation-specs.md` — es la fuente de verdad de todas las animaciones.
+
+---
+
+### D-028 — Fechas: date-fns 4, imports individuales
+**Decisión:** Librería de fechas: `date-fns` 4. Importar funciones individualmente. Prohibido Moment.js, dayjs, Luxon.
+**Alternativas:** Moment.js (deprecado), dayjs, Luxon, Date nativo.
+**Razón:** Tree-shakeable (solo se incluyen las funciones usadas). Funciones puras. Soporte de locales para i18n futuro.
+**Consecuencias:** `import { addMonths } from "date-fns"`, nunca `import * as dateFns from "date-fns"`.
+
+---
+
+### D-029 — Routing: React Router 7 con `createBrowserRouter`
+**Decisión:** Client-side routing con React Router 7, usando `createBrowserRouter`.
+**Alternativas:** TanStack Router, routing manual.
+**Razón:** Estándar para SPA React. Necesario para `useSearchParams` (parámetro `?cfg=`). 7 rutas definidas, lazy load en todas excepto `/`.
+**Consecuencias:** Usar `<Link>` o `useNavigate` para navegación interna — nunca `<a href>`. Lazy load vía `React.lazy()` + `<Suspense>`.
+
+---
+
+### D-030 — i18n: react-i18next, solo locale `es` en MVP
+**Decisión:** Internacionalización con `react-i18next`. Un único locale `es` en MVP. 6 namespaces: `common`, `calendar`, `config`, `search`, `feedback`, `onboarding`.
+**Alternativas:** i18n-ally, lingui, strings hardcodeados.
+**Razón:** Permite preparar la arquitectura de textos para múltiples idiomas sin implementarlos. Cero strings hardcodeados en JSX desde el inicio.
+**Consecuencias:** Todo texto visible al usuario pasa por `t('namespace:key')`. Mapa completo de keys en `docs/design/i18n-namespaces.md`.
+
+---
+
+### D-031 — Gestos: @use-gesture/react, umbral 50px + velocidad 0.3
+**Decisión:** Detección de swipe con `@use-gesture/react`. Umbral: 50px de distancia + 0.3 de velocidad mínima. Swipe vertical = meses, horizontal = años.
+**Alternativas:** Hammer.js, event listeners nativos de touch.
+**Razón:** Librería ligera, bien documentada, compatible con React 19. Umbral evita activaciones accidentales.
+**Consecuencias:** Siempre proveer controles de botón equivalentes para desktop y accesibilidad. Cada swipe ejecuta exactamente una acción.
+
+---
+
+### D-032 — Testing: Vitest + React Testing Library
+**Decisión:** Testing con Vitest + React Testing Library. Sin Jest, sin Cypress en MVP.
+**Alternativas:** Jest + RTL, Playwright (E2E), Cypress.
+**Razón:** Integración nativa con Vite. Testing orientado a comportamiento de usuario. E2E se agrega en v2.0.
+**Consecuencias:** Cada archivo en `src/core/` tiene su `.test.ts` al lado. Tests de componentes en `*.test.tsx`.
+
+---
+
+### D-033 — Algoritmo de turno: aritmética de módulo O(1)
+**Decisión:** El cálculo de estado de turno para cualquier fecha usa aritmética de módulo con `moduloPositivo(a,b) = ((a % b) + b) % b`. Sin iteración desde el origen.
+**Alternativas:** Iterar día por día desde `cycleStartDate`, lookup table pre-calculada.
+**Razón:** O(1) para cualquier fecha, sin importar la distancia temporal. Soporta fechas antes del origen con módulo positivo.
+**Consecuencias:** El cálculo hacia atrás (fechas antes de `cycleStartDate`) es correcto por diseño — no se omiten resultados. Implementado en `src/core/shift-calculator/shift-calculator.ts`.
+
+---
+
+### D-034 — Hosting: Cloudflare Pages con CI/CD desde `main`
+**Decisión:** Deploy en Cloudflare Pages. Auto-deploy desde rama `main`. CI: `lint → format:check → typecheck → test` antes de merge.
+**Alternativas:** Vercel, Netlify, GitHub Pages.
+**Razón:** Sitio estático. CDN global. Integración nativa con GitHub. Plan gratuito suficiente para MVP.
+**Consecuencias:** `VITE_FORMSPREE_ID` configurado en Cloudflare Pages, no en el repo. Variables de entorno nunca en archivos versionados.
+
+---
+
+## SECCIÓN 3 — Diseño y UX
+
+### D-018 — Artefactos de diseño: texto/markdown (no Figma)
+**Decisión:** Los artefactos de diseño son especificaciones en markdown: wireframes ASCII, design tokens como CSS custom properties, specs de componentes en markdown.
+**Alternativas:** Figma files, Zeplin, Storybook como fuente de verdad del diseño.
+**Razón:** El desarrollo es AI-first. Los agentes de desarrollo consumen las specs directamente desde markdown. Eliminar la herramienta de diseño del pipeline reduce fricción y permite iteración más rápida.
+**Consecuencias:** El diseño vive en `docs/design/`. Si se incorpora un diseñador humano, se evalúa agregar Figma. Los docs de diseño son la fuente de verdad.
+
+---
+
+### D-019 — Orden de diseño: design system primero
+**Decisión:** El diseño comienza siempre por los tokens (design system) antes de diseñar cualquier pantalla o componente.
+**Alternativas:** Diseñar pantallas primero y extraer tokens después.
+**Razón:** Sin tokens definidos, los wireframes y specs de componentes usarán valores arbitrarios que generan inconsistencia. Los tokens son la fuente de verdad que garantiza coherencia visual.
+**Consecuencias:** El design system es un bloqueante para iniciar el diseño de pantallas. **Estado actual: design system completo** (`docs/design/design-tokens.md`).
+
+---
+
+## SECCIÓN 4 — Proceso y Agentes
+
+### D-020 — Agentes específicos por proyecto, no genéricos
+**Decisión:** Los archivos de agente en `agents/` son específicos de DateOnDuty con contexto embebido del PRD, arquitectura, restricciones y usuarios.
+**Alternativas:** Agentes genéricos reutilizables que leen el PRD al inicio de cada conversación.
+**Razón:** El contexto embebido reduce el tiempo de warm-up del agente y garantiza que no trabaje con información desactualizada. Un agente que ya sabe que "los colores son dinámicos" no los hardcodeará.
+**Consecuencias:** Al actualizar el PRD o la Arquitectura, los archivos de agente deben actualizarse también. Son documentos vivos.
+
+---
+
+### D-021 — Skills de diseño: formato libre por caso de uso
+**Decisión:** Los skills en `agents/skills/` no siguen un formato único rígido. Cada skill define el formato más útil para su caso de uso.
+**Alternativas:** Formato estándar único para todos los skills.
+**Razón:** Los skills de diseño tienen naturalezas diferentes: algunos son plantillas de output (wireframe, component-spec), otros son checklists de validación (design-review), otros son generadores completos (design-tokens).
+**Consecuencias:** Los skills son invocables como slash commands desde Claude Code. El agente lee el skill file y lo ejecuta como sub-instrucción.
+
+---
+
+*Última entrada: D-034 — Febrero 2026*
