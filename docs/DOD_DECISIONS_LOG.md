@@ -302,4 +302,38 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 
 ---
 
-*Última entrada: D-034 — Febrero 2026*
+---
+
+### D-035 — Modal de importación: radio replace/add + nombres independientes
+**Decisión:** El modal de `SharedConfigReceiver` usa dos radio buttons ("Reemplazar mi turno actual" / "Guardar como nuevo turno") con dos campos de nombre independientes (`replaceName`, `addName`) que conservan su valor al cambiar de modo.
+**Alternativas:** Flujo multi-paso (seleccionar modo → siguiente pantalla → ingresar nombre), un solo campo de nombre que cambia de label.
+**Razón:** Un único modal plano evita la complejidad de múltiples pasos. Los dos estados de nombre son independientes para no perder lo que el usuario escribió si cambia de opinión sobre el modo.
+**Consecuencias:** Para "replace", `name` se pasa a `importFromUrl(payload, true, replaceName)` → es el nombre que recibirá el turno actual al ser "demotido" a adicional. Para "add", se pasa a `importFromUrl(payload, false, addName)` → es el nombre del turno importado.
+
+---
+
+### D-036 — Feedback "enlace copiado": opacidad CSS, no Toast
+**Decisión:** En `ShareConfigModal`, el mensaje "¡Enlace copiado!" se renderiza siempre con `opacity-0` y pasa a `opacity-100` durante 2 segundos al copiar. No usa el componente `Toast`.
+**Alternativas:** Usar el componente `Toast` (aparece desde bottom), cambiar el ícono del botón de Copy a Check.
+**Razón:** La confirmación de copia es inline y puntual — no requiere una notificación global que compita visualmente con el modal. El espacio reservado (`role="status" aria-live="polite"`) evita que el layout salte.
+**Consecuencias:** El elemento siempre ocupa espacio en el DOM (evita layout shift). `aria-live="polite"` anuncia el mensaje a lectores de pantalla cuando aparece.
+
+---
+
+### D-037 — SwipeAnimation: estructura de dos divs para evitar conflicto de transforms
+**Decisión:** `SwipeAnimation` usa un div externo para el posicionamiento fijo (`-translate-x-1/2 -translate-y-1/2`) y un div interno para la animación de entrada/salida (que usa `scale` en el keyframe). Nunca en el mismo elemento.
+**Alternativas:** Un solo div con ambas clases.
+**Razón:** CSS no permite combinar `translate` de Tailwind con `scale` de un keyframe en el mismo elemento sin que se sobreescriban. Separar las responsabilidades evita el conflicto.
+**Consecuencias:** El div externo solo gestiona posición; el interno solo gestiona opacidad/escala de animación. Patrón aplicable a cualquier componente que combine posicionamiento fijo con animación de transform.
+
+---
+
+### D-038 — ConfigBanner: `onboardingStartTime` en ui-store (no persistido)
+**Decisión:** El timestamp de inicio del onboarding se guarda en `ui-store` (memoria de sesión, no `persist`) para que el timer de 50s sobreviva navegaciones internas sin persistirse entre sesiones.
+**Alternativas:** `useRef` local en el componente (se pierde al navegar), `localStorage` directo (sobreviviría entre sesiones, lo que rompería la regla del timer).
+**Razón:** El timer debe sobrevivir si el usuario toca el banner y navega a `/config` y vuelve — pero debe reiniciarse en una nueva sesión del browser. `ui-store` sin persist es exactamente ese ciclo de vida.
+**Consecuencias:** Al recargar la página, `onboardingStartTime` se resetea a `null` y el timer arranca de cero si `bannerSeen` no está escrito en localStorage. Comportamiento intencional.
+
+---
+
+*Última entrada: D-038 — Febrero 2026*
