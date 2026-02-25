@@ -35,6 +35,8 @@
   "importDiscard": "Ignorar",
   "importNameLabel": "Nombre para el turno importado",
   "importOldNameLabel": "Nombre para tu turno actual",
+  "importConfirm": "Aceptar",
+  "importDefaultAddName": "Turno importado",
 
   "days": {
     "sun": "Dom",

@@ -17,6 +17,7 @@ import type { ShiftConfiguration } from '@/core/shift-calculator/types'
 import { ConfigRow } from './ConfigRow'
 import { ConfirmDeleteModal } from './ConfirmDeleteModal'
 import { ConfirmMakeDefaultModal } from './ConfirmMakeDefaultModal'
+import { ShareConfigModal } from '@/features/sharing/components/ShareConfigModal'
 
 // ─── ConfigPage ───────────────────────────────────────────────────────────────
 
@@ -28,6 +29,7 @@ export default function ConfigPage() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<ShiftConfiguration | null>(null)
   const [makeDefaultTarget, setMakeDefaultTarget] = useState<ShiftConfiguration | null>(null)
+  const [shareTarget, setShareTarget] = useState<ShiftConfiguration | null>(null)
 
   // ─── Derived ─────────────────────────────────────────────────────────────
 
@@ -63,6 +65,11 @@ export default function ConfigPage() {
     setMakeDefaultTarget(null)
   }
 
+  const handleOpenShare = (config: ShiftConfiguration) => {
+    setOpenMenuId(null)
+    setShareTarget(config)
+  }
+
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
@@ -81,6 +88,7 @@ export default function ConfigPage() {
             onDelete={() => {
               /* el default no puede eliminarse */
             }}
+            onShare={() => handleOpenShare(defaultConfig)}
           />
 
           {additionals.map((config) => (
@@ -91,6 +99,7 @@ export default function ConfigPage() {
               onMenuToggle={handleMenuToggle}
               onMakeDefault={() => handleOpenMakeDefault(config)}
               onDelete={() => handleOpenDelete(config)}
+              onShare={() => handleOpenShare(config)}
             />
           ))}
         </ul>
@@ -128,6 +137,8 @@ export default function ConfigPage() {
         onConfirm={handleConfirmMakeDefault}
         onCancel={() => setMakeDefaultTarget(null)}
       />
+
+      <ShareConfigModal config={shareTarget} onClose={() => setShareTarget(null)} />
     </div>
   )
 }

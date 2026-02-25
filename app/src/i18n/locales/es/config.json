@@ -29,8 +29,12 @@
   "name": "Nombre del turno",
   "isActive": "Activo en el calendario",
 
+  "menuShare": "Compartir",
   "shareButton": "Compartir turno",
   "shareCopied": "¡Enlace copiado!",
+  "shareCopyLink": "Copiar enlace",
+  "shareLink": "Enlace del turno",
+  "shareNative": "Compartir",
 
   "maxConfigsReached": "Llegaste al límite de 10 turnos adicionales.",
   "configSaved": "Turno guardado.",

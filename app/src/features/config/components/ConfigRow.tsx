@@ -10,7 +10,7 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { MoreVertical, X, Pencil, Star, Trash2 } from 'lucide-react'
+import { MoreVertical, X, Pencil, Star, Trash2, Share2 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ShiftConfiguration } from '@/core/shift-calculator/types'
 
@@ -30,6 +30,7 @@ export interface ConfigRowProps {
   onMenuToggle: (id: string) => void
   onMakeDefault: () => void
   onDelete: () => void
+  onShare: () => void
 }
 
 // ─── ConfigRow ────────────────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ export function ConfigRow({
   onMenuToggle,
   onMakeDefault,
   onDelete,
+  onShare,
 }: ConfigRowProps) {
   const { t } = useTranslation('config')
   const navigate = useNavigate()
@@ -91,6 +93,11 @@ export function ConfigRow({
     onDelete()
   }
 
+  const handleShare = () => {
+    onMenuToggle(config.id)
+    onShare()
+  }
+
   // ─── Menu keyboard navigation ─────────────────────────────────────────────
 
   const handleMenuKeyDown = (e: React.KeyboardEvent, idx: number) => {
@@ -111,6 +118,7 @@ export function ConfigRow({
 
   const menuItems: MenuItem[] = [
     { key: 'edit', label: t('menuEdit'), Icon: Pencil, onClick: handleEdit, danger: false },
+    { key: 'share', label: t('menuShare'), Icon: Share2, onClick: handleShare, danger: false },
     ...(!config.isDefault
       ? [
           {
@@ -179,6 +187,16 @@ export function ConfigRow({
           >
             <Pencil size={14} aria-hidden="true" />
             {t('menuEdit')}
+          </button>
+
+          <button
+            type="button"
+            aria-label={`${t('menuShare')} ${displayName}`}
+            className={inlineBtnCls()}
+            onClick={handleShare}
+          >
+            <Share2 size={14} aria-hidden="true" />
+            {t('menuShare')}
           </button>
 
           {!config.isDefault && (

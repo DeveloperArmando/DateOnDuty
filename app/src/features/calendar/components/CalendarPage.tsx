@@ -4,6 +4,7 @@ import { MonthGrid } from './MonthGrid'
 import { DayExpandedPanel } from './DayExpandedPanel'
 import { ConfigBanner } from '@/features/onboarding/components/ConfigBanner'
 import { SwipeAnimation } from '@/features/onboarding/components/SwipeAnimation'
+import { SharedConfigReceiver } from '@/features/sharing/components/SharedConfigReceiver'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -41,6 +42,9 @@ export default function CalendarPage() {
     <div className="bg-surface-base">
       {/* ConfigBanner se auto-gestiona: return null si bannerSeen=true */}
       <ConfigBanner onDismiss={() => {}} />
+
+      {/* Procesa ?cfg= y muestra modal de importación */}
+      <SharedConfigReceiver />
 
       <MonthGrid />
       <DayExpandedPanel />
