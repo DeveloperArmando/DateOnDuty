@@ -336,4 +336,20 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 
 ---
 
-*Última entrada: D-038 — Febrero 2026*
+### D-039 — Vite 7.x (no downgrade a 6.x)
+**Decisión:** El proyecto usa Vite 7.3.1. CLAUDE.md y Architecture_v1 se actualizan a `7.x`. No se baja la versión.
+**Alternativas:** Fijar en Vite 6.x para coincidir con la spec original.
+**Razón:** Vite 7 es compatible con el stack actual; no hay razón técnica para hacer downgrade. Mantener la versión más reciente reduce deuda de actualización.
+**Consecuencias:** La tabla de stack en CLAUDE.md y en Architecture_v1 debe reflejar `7.x`.
+
+---
+
+### D-040 — Lectura directa de `dod-preferences` en `main.tsx` (excepción pre-render)
+**Decisión:** `main.tsx` lee `dod-preferences` de localStorage de forma síncrona antes del primer render de React para aplicar el tema y evitar FOUC (flash of unstyled content). Esta es la tercera excepción documentada al acceso directo a localStorage.
+**Alternativas:** Leer el tema desde `theme-store` tras el primer render (produce FOUC), usar una cookie (requiere servidor).
+**Razón:** No existe alternativa viable sin FOUC en una SPA estática. La lectura es read-only y ocurre una sola vez en el arranque, antes de que Zustand se inicialice.
+**Consecuencias:** Las tres excepciones de localStorage directo son: `dod-onboarding`, `dod-feedback-cooldown`, y la lectura pre-render de `dod-preferences` en `main.tsx`. El código no debe modificarse.
+
+---
+
+*Última entrada: D-040 — Junio 2026*

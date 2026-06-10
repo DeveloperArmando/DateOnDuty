@@ -55,5 +55,9 @@
   "connectionError": "Error de conexión. Verifica tu internet e intenta de nuevo.",
 
   "tabChangeNotice": "Hay cambios en otra pestaña.",
-  "tabChangeUpdate": "Actualizar"
+  "tabChangeUpdate": "Actualizar",
+
+  "globalActions": "Acciones globales",
+  "comingSoon": "Contenido próximamente.",
+  "backToCalendar": "Volver al calendario"
 }

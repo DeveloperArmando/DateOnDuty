@@ -27,7 +27,7 @@ The authoritative references are:
 |---|---|---|
 | React | 19.x | UI framework |
 | TypeScript | 5.x | Language (`strict: true`) |
-| Vite | 6.x | Build tool (SPA only, no SSR) |
+| Vite | 7.x | Build tool (SPA only, no SSR) |
 | Tailwind CSS | 4.x | Styling (dark mode via `dark` class on `<html>`) |
 | Zustand | 5.x | State management with `persist` middleware |
 | date-fns | 4.x | Date utilities (import individually, never as `* as`) |
@@ -105,8 +105,8 @@ Every file under `core/` must have a sibling `.test.ts` file.
 ### Stores (`src/stores/`)
 - `config-store` and `theme-store` use Zustand `persist` middleware. `ui-store` is not persisted.
 - Business logic (shift calculations) stays in `core/`, not in stores.
-- No component reads/writes localStorage directly — always through stores or the two exceptions below.
-- Two direct localStorage keys (not Zustand-managed): `dod-onboarding` (onboarding flags), `dod-feedback-cooldown` (timestamp).
+- No component reads/writes localStorage directly — always through stores or the three exceptions below.
+- Three direct localStorage keys (not Zustand-managed): `dod-onboarding` (onboarding flags), `dod-feedback-cooldown` (timestamp), and a read-only pre-render access to `dod-preferences` in `main.tsx` (prevents theme FOUC before first React render).
 - All localStorage keys use prefix `dod-`.
 
 ### Data Schema (localStorage)

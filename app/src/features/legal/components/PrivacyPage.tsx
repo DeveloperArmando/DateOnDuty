@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function PrivacyPage() {
+  const { t } = useTranslation()
   return (
     <div className="mx-auto max-w-prose px-4 py-8 text-text-primary">
-      <h1 className="mb-4 text-2xl font-semibold">Política de Privacidad</h1>
-      <p className="mb-4 text-text-secondary">Contenido próximamente.</p>
+      <h1 className="mb-4 text-2xl font-semibold">{t('pageTitle.privacy')}</h1>
+      <p className="mb-4 text-text-secondary">{t('comingSoon')}</p>
       <Link to="/" className="text-interactive-primary underline">
-        Volver al calendario
+        {t('backToCalendar')}
       </Link>
     </div>
   )

@@ -9,5 +9,7 @@
   "helpSwipeYears": "Desliza a los lados para cambiar de año",
   "helpTapDay": "Toca un día para ver el detalle",
   "helpShare": "Comparte tu turno con el botón de compartir",
-  "helpClose": "Entendido"
+  "helpClose": "Entendido",
+
+  "bannerTimeRemaining": "Tiempo restante del aviso"
 }
