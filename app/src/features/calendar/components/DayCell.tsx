@@ -27,9 +27,22 @@ interface FranjaProps {
   index: number
 }
 
+function getFranjaBackground(color: string, status: CalendarDayResult['status']): string {
+  if (status.type === 'entry') {
+    // Shift starts here — most intense, fades slightly to right (shift continues)
+    return `linear-gradient(to right, ${hexToRgba(color, 0.95)}, ${hexToRgba(color, 0.65)})`
+  }
+  if (status.type === 'exit') {
+    // Shift ends here — medium on left (still running), fades to near-transparent (ending)
+    return `linear-gradient(to right, ${hexToRgba(color, 0.6)}, ${hexToRgba(color, 0.08)})`
+  }
+  // on_duty — uniform medium, shift is stable
+  return hexToRgba(color, 0.72)
+}
+
 function Franja({ result, index }: FranjaProps) {
   const { color, status, timeFormat } = result
-  const bg = `linear-gradient(to bottom, ${hexToRgba(color, 0.9)}, ${hexToRgba(color, 0.4)})`
+  const bg = getFranjaBackground(color, status)
 
   return (
     <div

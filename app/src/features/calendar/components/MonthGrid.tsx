@@ -222,16 +222,24 @@ export function MonthGrid() {
 
   const gridKey = currentYear * 12 + currentMonth
 
+  const lineColor =
+    gridLineColor !== '#E5E7EB' ? gridLineColor : 'var(--color-border-default)'
+
   return (
     <div
       role="grid"
       aria-label={t('calendarNavLabel')}
       className="select-none touch-none"
+      style={{ borderLeft: `1px solid ${lineColor}` }}
       onKeyDown={handleKeyDown}
       {...bind()}
     >
       {/* Header: días de la semana */}
-      <div role="row" className="grid grid-cols-7 border-b border-border-default">
+      <div
+        role="row"
+        className="grid grid-cols-7"
+        style={{ borderBottom: `1px solid ${lineColor}` }}
+      >
         {dayKeys.map((key) => (
           <div
             key={key}
@@ -252,7 +260,7 @@ export function MonthGrid() {
           .join(' ')}
       >
         {cells.map((cell) => (
-          <div key={cell.dateStr} role="gridcell">
+          <div key={cell.dateStr} role="gridcell" className="flex flex-col">
             <DayCell
               cell={cell}
               isSelected={expandedDay === cell.dateStr}
