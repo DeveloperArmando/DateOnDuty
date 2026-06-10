@@ -1,10 +1,12 @@
 import { Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /** Fallback de pantalla completa mientras se carga un chunk lazy. */
 export function PageLoader() {
+  const { t } = useTranslation()
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface-base">
-      <span className="animate-pulse text-sm text-text-secondary">Cargando...</span>
+      <span className="animate-pulse text-sm text-text-secondary">{t('loading')}</span>
     </div>
   )
 }

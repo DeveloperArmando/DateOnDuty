@@ -137,7 +137,7 @@ export function ConfigBanner({ onDismiss }: ConfigBannerProps) {
         aria-valuenow={elapsed}
         aria-valuemin={0}
         aria-valuemax={50}
-        aria-label="Tiempo restante del aviso"
+        aria-label={t('bannerTimeRemaining')}
         className="h-0.5 w-full bg-border-default"
       >
         <div
