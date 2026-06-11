@@ -46,7 +46,7 @@ function Franja({ result, index }: FranjaProps) {
 
   return (
     <div
-      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} items-center justify-end h-[14px] sm:h-[18px] shrink-0`}
+      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} items-center ${status.type === 'entry' ? 'justify-start' : 'justify-end'} h-[14px] sm:h-[18px] shrink-0`}
       style={{ background: bg }}
     >
       {(status.type === 'entry' || status.type === 'exit') && (
