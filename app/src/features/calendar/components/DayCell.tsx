@@ -46,7 +46,7 @@ function Franja({ result, index }: FranjaProps) {
 
   return (
     <div
-      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} items-center ${status.type === 'entry' ? 'justify-start' : 'justify-end'} h-[14px] sm:h-[18px] shrink-0`}
+      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} items-start ${status.type === 'entry' ? 'justify-start' : 'justify-end'} flex-1 min-h-0 pt-0.5`}
       style={{ background: bg }}
     >
       {(status.type === 'entry' || status.type === 'exit') && (
@@ -153,9 +153,13 @@ export function DayCell({
       </div>
 
       {/* Franjas de turno */}
-      {displayedFranjas.map((r, i) => (
-        <Franja key={r.configId} result={r} index={i} />
-      ))}
+      {displayedFranjas.length > 0 && (
+        <div className="flex flex-col flex-1 min-h-0 pt-2 gap-px">
+          {displayedFranjas.map((r, i) => (
+            <Franja key={r.configId} result={r} index={i} />
+          ))}
+        </div>
+      )}
 
       {/* Badge overflow — mobile (>2) */}
       {mobileOverflow > 0 && (
