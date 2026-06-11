@@ -4,17 +4,13 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
-    "ms-vscode.vscode-typescript-next",
 
     // Alta utilidad
     "vitest.explorer",
     "lokalise.i18n-ally",
-    "formulahendry.auto-rename-tag",
-    "christian-kohler.path-intellisense",
 
     // Recomendados
     "usernamehak.errorlens",
-    "eamodio.gitlens",
     "vunguyentuan.vscode-css-variables",
     "naumovs.color-highlight",
 
