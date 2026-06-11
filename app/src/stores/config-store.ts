@@ -6,13 +6,25 @@ import type { SharedConfigPayload } from '@/core/url-encoder/types'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+// generateId() requiere secure context (HTTPS/localhost).
+// crypto.getRandomValues() funciona en cualquier contexto (incluye IP local en dev).
+function generateId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  const bytes = new Uint8Array(16)
+  crypto.getRandomValues(bytes)
+  bytes[6] = (bytes[6] & 0x0f) | 0x40
+  bytes[8] = (bytes[8] & 0x3f) | 0x80
+  const h = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
+}
+
 function todayISO(): string {
   return format(new Date(), 'yyyy-MM-dd')
 }
 
 function createDefaultConfig(): ShiftConfiguration {
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     isDefault: true,
     name: null,
     scheme: '24x48',
@@ -97,7 +109,7 @@ export const useConfigStore = create<ConfigStore>()(
           const additionals = state.configs.filter((c) => !c.isDefault)
           if (additionals.length >= 10) return state
           return {
-            configs: [...state.configs, { ...config, id: crypto.randomUUID() }],
+            configs: [...state.configs, { ...config, id: generateId() }],
           }
         }),
 
@@ -132,7 +144,7 @@ export const useConfigStore = create<ConfigStore>()(
           const scheme = parseScheme(payload.s)
 
           const newConfig: ShiftConfiguration = {
-            id: crypto.randomUUID(),
+            id: generateId(),
             isDefault: asDefault,
             name: asDefault ? null : (name ?? 'Turno importado'),
             scheme,
