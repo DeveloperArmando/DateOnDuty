@@ -93,7 +93,9 @@ export function DayCell({
         className={`${cellBase} opacity-40 pointer-events-none`}
         style={borderStyle}
       >
-        <span className="text-xs sm:text-sm text-text-secondary p-0.5 shrink-0">{dayNumber}</span>
+        <div className="flex h-6 sm:h-7 items-center justify-center shrink-0">
+          <span className="text-xs sm:text-sm text-text-secondary">{dayNumber}</span>
+        </div>
       </div>
     )
   }
@@ -138,13 +140,15 @@ export function DayCell({
       onFocus={() => onFocus(dateStr)}
     >
       {/* Número del día */}
-      {isToday ? (
-        <span className="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-full bg-interactive-primary text-interactive-primary-text text-xs sm:text-sm font-bold m-0.5">
-          {dayNumber}
-        </span>
-      ) : (
-        <span className="text-xs sm:text-sm text-text-primary p-0.5 shrink-0">{dayNumber}</span>
-      )}
+      <div className="flex h-6 sm:h-7 items-center justify-center shrink-0">
+        {isToday ? (
+          <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-interactive-primary text-interactive-primary-text text-xs sm:text-sm font-bold">
+            {dayNumber}
+          </span>
+        ) : (
+          <span className="text-xs sm:text-sm text-text-primary">{dayNumber}</span>
+        )}
+      </div>
 
       {/* Franjas de turno */}
       {displayedFranjas.map((r, i) => (
