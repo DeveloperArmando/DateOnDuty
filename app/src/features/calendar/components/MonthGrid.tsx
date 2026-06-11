@@ -229,7 +229,7 @@ export function MonthGrid() {
     <div
       role="grid"
       aria-label={t('calendarNavLabel')}
-      className="select-none touch-none"
+      className="flex flex-col flex-1 select-none touch-none"
       style={{ borderLeft: `1px solid ${lineColor}` }}
       onKeyDown={handleKeyDown}
       {...bind()}
@@ -255,12 +255,12 @@ export function MonthGrid() {
       {/* Celdas del mes — key fuerza remount en cada navegación */}
       <div
         key={gridKey}
-        className={['grid grid-cols-7', animType ? ANIM_CLASS[animType] : '']
+        className={['grid grid-cols-7 flex-1 [grid-auto-rows:1fr]', animType ? ANIM_CLASS[animType] : '']
           .filter(Boolean)
           .join(' ')}
       >
         {cells.map((cell) => (
-          <div key={cell.dateStr} role="gridcell" className="flex flex-col">
+          <div key={cell.dateStr} role="gridcell" className="flex flex-col h-full">
             <DayCell
               cell={cell}
               isSelected={expandedDay === cell.dateStr}

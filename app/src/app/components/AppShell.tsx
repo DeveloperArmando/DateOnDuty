@@ -11,7 +11,7 @@ export function AppShell() {
   return (
     <div className="flex min-h-screen flex-col bg-surface-base">
       <AppBar />
-      <main className="flex-1">
+      <main className="flex flex-col flex-1">
         <Outlet />
       </main>
       <BottomBar />

@@ -85,14 +85,14 @@ export function DayCell({
   const borderStyle = gridLineColor !== '#E5E7EB' ? { borderColor: gridLineColor } : undefined
 
   const cellBase =
-    'relative flex flex-col border-b border-r border-border-default h-[3.5rem] sm:h-[5rem] overflow-hidden'
+    'relative flex flex-col border-b border-r border-border-default overflow-hidden'
 
   // Celdas fuera del mes: no interactivas, aria-hidden
   if (!isCurrentMonth) {
     return (
       <div
         aria-hidden="true"
-        className={`${cellBase} opacity-40 pointer-events-none`}
+        className={`${cellBase} h-full opacity-40 pointer-events-none`}
         style={borderStyle}
       >
         <div className="flex justify-center shrink-0 pt-2.5">
@@ -130,7 +130,7 @@ export function DayCell({
       aria-expanded={isSelected}
       className={[
         cellBase,
-        'cursor-pointer bg-surface-base hover:bg-surface-elevated',
+        'h-full cursor-pointer bg-surface-base hover:bg-surface-elevated',
         'transition-colors duration-fast ease-default',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus-ring',
         isSelected ? 'ring-2 ring-inset ring-interactive-primary' : '',

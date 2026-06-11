@@ -39,7 +39,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="bg-surface-base">
+    <div className="flex flex-col flex-1 bg-surface-base">
       {/* ConfigBanner se auto-gestiona: return null si bannerSeen=true */}
       <ConfigBanner onDismiss={() => {}} />
 
