@@ -50,7 +50,9 @@ function Franja({ result, index }: FranjaProps) {
       style={{ background: bg }}
     >
       {(status.type === 'entry' || status.type === 'exit') && (
-        <span className="text-[10px] leading-none px-0.5 text-shift-text-on-light dark:text-shift-text-on-dark">
+        <span
+          className={`text-[10px] leading-none ${status.type === 'entry' ? 'px-1.5' : 'px-2'} text-shift-text-on-light dark:text-shift-text-on-dark`}
+        >
           {formatShiftTime(status.time, timeFormat)}
         </span>
       )}
@@ -93,7 +95,7 @@ export function DayCell({
         className={`${cellBase} opacity-40 pointer-events-none`}
         style={borderStyle}
       >
-        <div className="flex h-6 sm:h-7 items-center justify-center shrink-0">
+        <div className="flex justify-center shrink-0 pt-2.5">
           <span className="text-xs sm:text-sm text-text-secondary">{dayNumber}</span>
         </div>
       </div>
@@ -140,7 +142,7 @@ export function DayCell({
       onFocus={() => onFocus(dateStr)}
     >
       {/* Número del día */}
-      <div className="flex h-6 sm:h-7 items-center justify-center shrink-0">
+      <div className="flex h-8 sm:h-9 justify-center pt-2 shrink-0">
         {isToday ? (
           <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-interactive-primary text-interactive-primary-text text-xs sm:text-sm font-bold">
             {dayNumber}
