@@ -12,6 +12,7 @@ import { useId, useMemo, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { format, addDays } from 'date-fns'
+import { es } from 'date-fns/locale'
 import type { ShiftConfiguration, ShiftScheme, TimeFormat } from '@/core/shift-calculator/types'
 import { useConfigStore } from '@/stores/config-store'
 import { useThemeStore } from '@/stores/theme-store'
@@ -35,22 +36,6 @@ const GRID_COLORS = [
   { value: '#374151', key: 'gridColorDark' },
 ] as const
 
-const DAY_ABBR = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
-const MONTH_ABBR = [
-  'ene',
-  'feb',
-  'mar',
-  'abr',
-  'may',
-  'jun',
-  'jul',
-  'ago',
-  'sep',
-  'oct',
-  'nov',
-  'dic',
-]
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getSchemeKey(scheme: ShiftScheme): SchemeKey {
@@ -61,8 +46,9 @@ function buildScheme(key: SchemeKey, wh: number, rh: number): ShiftScheme {
   return key !== 'custom' ? key : { type: 'custom', workHours: wh, restHours: rh }
 }
 
+/** Fecha corta localizada, ej. "lun 16 nov". */
 function shortDate(date: Date): string {
-  return `${DAY_ABBR[date.getDay()]}. ${date.getDate()} ${MONTH_ABBR[date.getMonth()]}`
+  return format(date, 'EEE d MMM', { locale: es })
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -106,8 +92,10 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
   const [color, setColor] = useState(config?.color ?? '#2563EB')
   const [timeFormat, setTimeFormat] = useState<TimeFormat>(config?.timeFormat ?? '24h')
 
-  // Global preferences (only written when isDefault=true)
-  const [localTheme, setLocalTheme] = useState<'light' | 'dark'>(theme)
+  // Global preferences (only written when isDefault=true).
+  // El tema no tiene copia local: se aplica al instante, igual que el botón del AppBar.
+  // Una copia local quedaba desfasada si el tema se cambiaba desde el AppBar con el
+  // formulario abierto, y al guardar revertía ese cambio.
   const [localFirstDay, setLocalFirstDay] = useState<0 | 1>(firstDayOfWeek)
   const [localGridColor, setLocalGridColor] = useState(gridLineColor)
 
@@ -222,7 +210,6 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
     }
 
     if (isDefault) {
-      setTheme(localTheme)
       setFirstDayOfWeek(localFirstDay)
       setGridLineColor(localGridColor)
     }
@@ -585,8 +572,8 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
                       type="radio"
                       name={fId('theme')}
                       value={th}
-                      checked={localTheme === th}
-                      onChange={() => setLocalTheme(th)}
+                      checked={theme === th}
+                      onChange={() => setTheme(th)}
                       className="accent-interactive-primary"
                     />
                     <span className="text-sm text-text-primary">

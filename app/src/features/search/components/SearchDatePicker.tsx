@@ -268,7 +268,11 @@ export function SearchDatePicker({ value, onChange, firstDayOfWeek }: SearchDate
                 type="button"
                 data-date={iso}
                 tabIndex={isFocused ? 0 : -1}
-                aria-label={`${date.getDate()} de ${tc(`months.${MONTH_KEYS[date.getMonth()]}`)} de ${date.getFullYear()}`}
+                aria-label={ts('dayAriaLabel', {
+                  day: date.getDate(),
+                  month: tc(`months.${MONTH_KEYS[date.getMonth()]}`),
+                  year: date.getFullYear(),
+                })}
                 aria-pressed={isSelected}
                 aria-current={isTodayDate && !isSelected ? 'date' : undefined}
                 onClick={() => handleDayClick(date)}
