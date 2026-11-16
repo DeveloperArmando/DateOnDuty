@@ -46,6 +46,10 @@ export function resolveScheme(scheme: ShiftConfiguration['scheme']): ResolvedSch
  *
  * Algoritmo O(1): posición = moduloPositivo(minutosDesdeOrigen, cicloTotal)
  *
+ * Toda entrada y toda salida se reporta en el día calendario en que ocurre. Si un
+ * día contiene ambas (turnos de 12h, descansos cortos), el resultado las incluye
+ * a las dos: ver `ShiftStatus`.
+ *
  * Usa UTC para todos los cálculos, evitando interferencia de DST
  * (regla de arquitectura: 1 día = 24 horas absolutas exactas).
  *
@@ -69,31 +73,24 @@ export function calculateShiftStatus(config: ShiftConfiguration, targetDate: str
   // Posición dentro del ciclo a la medianoche del día objetivo
   const p = moduloPositivo(minutesFromOrigin, cycleMinutes)
 
-  // ─── Fase de descanso a medianoche ───────────────────────────────────────
-  if (p >= workMinutes) {
-    const minutesUntilEntry = cycleMinutes - p
-    if (minutesUntilEntry < MINUTES_PER_DAY) {
-      // La entrada ocurre hoy
-      return { type: 'entry', time: minutesToTime(minutesUntilEntry) }
-    }
-    // El ciclo no llega al inicio del trabajo hoy
-    return { type: 'off_duty' }
+  // Minutos desde las 00:00 del día objetivo hasta la próxima entrada y la próxima
+  // salida. Valen 0 cuando el evento cae exactamente a medianoche de este día.
+  const untilEntry = moduloPositivo(-p, cycleMinutes)
+  const untilExit = moduloPositivo(workMinutes - p, cycleMinutes)
+
+  const entryToday = untilEntry < MINUTES_PER_DAY
+  const exitToday = untilExit < MINUTES_PER_DAY
+
+  // Dos eventos el mismo día: el primero define el tipo, el segundo lo acompaña
+  if (entryToday && exitToday) {
+    return untilEntry < untilExit
+      ? { type: 'entry', time: minutesToTime(untilEntry), exitTime: minutesToTime(untilExit) }
+      : { type: 'exit', time: minutesToTime(untilExit), entryTime: minutesToTime(untilEntry) }
   }
 
-  // ─── Fase de trabajo a medianoche (p < workMinutes) ──────────────────────
+  if (entryToday) return { type: 'entry', time: minutesToTime(untilEntry) }
+  if (exitToday) return { type: 'exit', time: minutesToTime(untilExit) }
 
-  // Caso especial: el bloque de trabajo inicia exactamente a medianoche
-  if (p === 0) {
-    return { type: 'entry', time: '00:00' }
-  }
-
-  // Estamos en la mitad del bloque de trabajo — ¿termina hoy?
-  const minutesUntilExit = workMinutes - p
-  if (minutesUntilExit < MINUTES_PER_DAY) {
-    // El turno termina durante este día
-    return { type: 'exit', time: minutesToTime(minutesUntilExit) }
-  }
-
-  // El turno continúa todo el día (día intermedio de turno largo)
-  return { type: 'on_duty' }
+  // Sin eventos hoy: el día completo cae dentro del trabajo o dentro del descanso
+  return p < workMinutes ? { type: 'on_duty' } : { type: 'off_duty' }
 }

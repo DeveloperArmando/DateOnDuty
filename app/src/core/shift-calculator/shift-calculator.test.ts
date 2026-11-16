@@ -159,25 +159,70 @@ describe('calculateShiftStatus — 12x36, entrada 20:00 (cruza medianoche)', () 
 describe('calculateShiftStatus — 12x36, entrada 08:00 (entrada y salida mismo día)', () => {
   const config = makeConfig({ scheme: '12x36', entryTime: '08:00', cycleStartDate: '2026-02-22' })
 
-  it('día de inicio → entry a las 08:00', () => {
-    // p = moduloPositivo(-480, 2880) = 2400 ≥ 720 → en descanso, entry en 2880-2400=480 min = 8h
+  it('día de inicio → entry a las 08:00 con salida a las 20:00 el mismo día', () => {
+    // p = moduloPositivo(-480, 2880) = 2400 → entrada en 480 min (08:00), salida en 1200 min (20:00)
     expect(calculateShiftStatus(config, '2026-02-22')).toEqual({
       type: 'entry',
       time: '08:00',
+      exitTime: '20:00',
     })
   })
 
-  it('día siguiente → exit a las 20:00', () => {
-    // origin = 2026-02-22T08:00Z
-    // 2026-02-23T00:00Z → minutesFromOrigin = 16*60 = 960
-    // p = 960 ≥ 720 → en descanso, entry en 2880-960=1920 min = 32h > 24h → off_duty
-    expect(calculateShiftStatus(config, '2026-02-23').type).toBe('off_duty')
+  it('día siguiente → off_duty (el turno terminó el día anterior)', () => {
+    // p = 960 ≥ 720 → en descanso; próxima entrada en 1920 min (32h) → sin eventos hoy
+    expect(calculateShiftStatus(config, '2026-02-23')).toEqual({ type: 'off_duty' })
   })
 
-  it('mismo día de inicio tiene entry (no exit) — la salida se computa del config', () => {
-    const result = calculateShiftStatus(config, '2026-02-22')
-    // La función retorna 'entry'. El exit (20:00) lo deriva el componente del config.
-    expect(result.type).toBe('entry')
+  it('el patrón [entry+exit, off_duty] se repite cada 2 días', () => {
+    expect(calculateShiftStatus(config, '2026-02-24')).toEqual({
+      type: 'entry',
+      time: '08:00',
+      exitTime: '20:00',
+    })
+    expect(calculateShiftStatus(config, '2026-02-25')).toEqual({ type: 'off_duty' })
+  })
+})
+
+// ─── calculateShiftStatus — descanso corto (sale y vuelve a entrar el mismo día) ─
+
+describe('calculateShiftStatus — custom 12x12, entrada 19:00 (turno nocturno diario)', () => {
+  const config = makeConfig({
+    scheme: { type: 'custom', workHours: 12, restHours: 12 },
+    entryTime: '19:00',
+    cycleStartDate: '2026-02-22',
+  })
+
+  it('todos los días → exit a las 07:00 y nueva entrada a las 19:00', () => {
+    // p = 300 → salida en 420 min (07:00), siguiente entrada en 1140 min (19:00).
+    // El ciclo es infinito hacia atrás: el día de inicio también trae la salida del ciclo previo.
+    const expected = { type: 'exit', time: '07:00', entryTime: '19:00' }
+    expect(calculateShiftStatus(config, '2026-02-22')).toEqual(expected)
+    expect(calculateShiftStatus(config, '2026-02-23')).toEqual(expected)
+    expect(calculateShiftStatus(config, '2026-02-24')).toEqual(expected)
+  })
+})
+
+describe('calculateShiftStatus — custom 12x24, entrada 07:00 (alterna día y noche)', () => {
+  const config = makeConfig({
+    scheme: { type: 'custom', workHours: 12, restHours: 24 },
+    entryTime: '07:00',
+    cycleStartDate: '2026-02-22',
+  })
+
+  it('recorre el ciclo de 36h a lo largo de 3 días calendario', () => {
+    // 22: 07:00–19:00 · 23: entra 19:00 · 24: sale 07:00 · 25: 07:00–19:00 (se repite)
+    expect(calculateShiftStatus(config, '2026-02-22')).toEqual({
+      type: 'entry',
+      time: '07:00',
+      exitTime: '19:00',
+    })
+    expect(calculateShiftStatus(config, '2026-02-23')).toEqual({ type: 'entry', time: '19:00' })
+    expect(calculateShiftStatus(config, '2026-02-24')).toEqual({ type: 'exit', time: '07:00' })
+    expect(calculateShiftStatus(config, '2026-02-25')).toEqual({
+      type: 'entry',
+      time: '07:00',
+      exitTime: '19:00',
+    })
   })
 })
 
@@ -240,17 +285,14 @@ describe('calculateShiftStatus — año bisiesto (Feb 29)', () => {
 describe('calculateShiftStatus — fechas muy lejanas', () => {
   const config = makeConfig({ scheme: '24x48', entryTime: '08:00', cycleStartDate: '2026-02-22' })
 
-  it('10 años en el futuro → calcula correctamente sin degradación', () => {
-    // El módulo mantiene O(1) sin importar la distancia
-    const result = calculateShiftStatus(config, '2036-02-22')
-    // 10 años ≈ 3652 días. 3652 * 1440 / 4320 = ~1217 ciclos completos + resto
-    // El resultado debe ser uno de los 4 tipos válidos
-    expect(['entry', 'exit', 'on_duty', 'off_duty']).toContain(result.type)
+  it('10 años en el futuro → mismo punto del ciclo que el inicio', () => {
+    // 2026-02-22 → 2036-02-22 = 3652 días (bisiestos 2028 y 2032). 3652 % 3 = 1 → día 2 del ciclo
+    expect(calculateShiftStatus(config, '2036-02-22')).toEqual({ type: 'exit', time: '08:00' })
   })
 
   it('5 años en el pasado → calcula correctamente con moduloPositivo', () => {
-    const result = calculateShiftStatus(config, '2021-02-22')
-    expect(['entry', 'exit', 'on_duty', 'off_duty']).toContain(result.type)
+    // 2021-02-22 → 2026-02-22 = 1826 días (bisiesto 2024). -1826 mod 3 = 1 → día 2 del ciclo
+    expect(calculateShiftStatus(config, '2021-02-22')).toEqual({ type: 'exit', time: '08:00' })
   })
 })
 
@@ -292,9 +334,40 @@ describe('calculateShiftStatus — entrada exactamente a medianoche', () => {
     })
   })
 
-  it('día siguiente → exit a las 00:00', () => {
-    // minutesFromOrigin = 1440 → p = 1440 < 1440? No, 1440 = workMinutes → en descanso
-    // p = 1440 ≥ 1440 → en descanso, entry en 4320-1440=2880 min = 48h > 24h → off_duty
-    expect(calculateShiftStatus(config, '2026-02-23').type).toBe('off_duty')
+  it('día siguiente → exit a las 00:00 (la salida se reporta el día en que ocurre)', () => {
+    // minutesFromOrigin = 1440 → p = 1440 = workMinutes → la salida cae justo a las 00:00 de hoy
+    expect(calculateShiftStatus(config, '2026-02-23')).toEqual({ type: 'exit', time: '00:00' })
+  })
+
+  it('tercer día → off_duty', () => {
+    expect(calculateShiftStatus(config, '2026-02-24')).toEqual({ type: 'off_duty' })
+  })
+})
+
+// ─── Paridad con la v1 (calendario-de-turno-laboral) ─────────────────────────
+
+describe('paridad con la v1 — ciclo de 3 días anclado al 2023-08-02', () => {
+  // Algoritmo original de la v1 (script.js): días desde el 2 de agosto de 2023, módulo 3,
+  // con índices 0 = sale, 1 = franco, 2 = entra.
+  const V1_TURNS = ['exit', 'off_duty', 'entry'] as const
+  const MS_PER_DAY = 24 * 60 * 60 * 1000
+  const v1Reference = Date.UTC(2023, 7, 2)
+
+  function v1Turn(utcDay: number): (typeof V1_TURNS)[number] {
+    const diffDays = Math.round((utcDay - v1Reference) / MS_PER_DAY)
+    return V1_TURNS[((diffDays % 3) + 3) % 3]
+  }
+
+  // Configuración equivalente en la v2: 24x48 cuyo ciclo inicia un día "entra" de la v1
+  const config = makeConfig({ scheme: '24x48', entryTime: '08:00', cycleStartDate: '2023-08-01' })
+
+  it('coincide con la v1 todos los días de 2020 a 2030', () => {
+    const mismatches: string[] = []
+    for (let day = Date.UTC(2020, 0, 1); day <= Date.UTC(2030, 11, 31); day += MS_PER_DAY) {
+      const dateStr = new Date(day).toISOString().slice(0, 10)
+      const actual = calculateShiftStatus(config, dateStr).type
+      if (actual !== v1Turn(day)) mismatches.push(`${dateStr}: v1=${v1Turn(day)} v2=${actual}`)
+    }
+    expect(mismatches).toEqual([])
   })
 })
