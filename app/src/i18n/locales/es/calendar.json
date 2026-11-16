@@ -24,9 +24,16 @@
     "activeShifts": "Turnos activos",
     "entry": "Entrada a las {{time}}",
     "exit": "Salida a las {{time}}",
+    "entryExit": "Entrada a las {{entry}}, salida a las {{exit}}",
+    "exitEntry": "Salida a las {{exit}}, entrada a las {{entry}}",
     "onDuty": "En turno",
     "offDuty": "Día libre",
     "defaultConfigName": "Mi turno"
+  },
+
+  "cell": {
+    "day": "Día {{day}}",
+    "config": "{{name}}: {{status}}"
   },
 
   "importTitle": "Turno recibido",

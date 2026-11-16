@@ -15,26 +15,22 @@ import { useConfigStore } from '@/stores/config-store'
 import { useThemeStore } from '@/stores/theme-store'
 import { useUIStore } from '@/stores/ui-store'
 import { calculateShiftStatus } from '@/core/shift-calculator/shift-calculator'
-import type { ShiftConfiguration, ShiftStatus, TimeFormat } from '@/core/shift-calculator/types'
+import { describeShiftStatus } from '@/core/shift-format/shift-format'
+import type { ShiftStatusMessageKey } from '@/core/shift-format/shift-format'
+import type { ShiftConfiguration, ShiftStatus } from '@/core/shift-calculator/types'
 import { Button } from '@/shared/components/Button'
 import { SearchDatePicker } from './SearchDatePicker'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatTime(time: string, timeFormat: TimeFormat): string {
-  const [hoursStr, minutesStr] = time.split(':')
-  const hours = parseInt(hoursStr, 10)
-  switch (timeFormat) {
-    case '24h':
-      return time
-    case 'military':
-      return `${String(hours).padStart(2, '0')}${minutesStr}`
-    case '12h': {
-      const period = hours >= 12 ? 'PM' : 'AM'
-      const h12 = hours % 12 || 12
-      return `${h12}:${minutesStr} ${period}`
-    }
-  }
+/** Clave i18n (namespace search) para cada variante de estado del día. */
+const STATUS_KEYS: Record<ShiftStatusMessageKey, string> = {
+  entry: 'statusEntry',
+  exit: 'statusExit',
+  entryExit: 'statusEntryExit',
+  exitEntry: 'statusExitEntry',
+  onDuty: 'statusOnDuty',
+  offDuty: 'statusOffDuty',
 }
 
 function getSchemeLabel(scheme: ShiftConfiguration['scheme']): string {
@@ -44,10 +40,11 @@ function getSchemeLabel(scheme: ShiftConfiguration['scheme']): string {
 
 // ─── ShiftResultCard ──────────────────────────────────────────────────────────
 
-interface StatusDisplay {
-  Icon: LucideIcon
-  colorClass: string
-  statusText: string
+const STATUS_STYLE: Record<ShiftStatus['type'], { Icon: LucideIcon; colorClass: string }> = {
+  entry: { Icon: LogIn, colorClass: 'text-feedback-success' },
+  exit: { Icon: LogOut, colorClass: 'text-feedback-warning' },
+  on_duty: { Icon: Clock, colorClass: 'text-text-primary' },
+  off_duty: { Icon: Coffee, colorClass: 'text-text-disabled' },
 }
 
 interface ShiftResultCardProps {
@@ -66,28 +63,10 @@ function ShiftResultCard({ config, status, isDefault = false }: ShiftResultCardP
 
   const schemeLabel = getSchemeLabel(config.scheme)
 
-  const display: StatusDisplay = (() => {
-    switch (status.type) {
-      case 'entry':
-        return {
-          Icon: LogIn,
-          colorClass: 'text-feedback-success',
-          statusText: ts('statusEntry', { time: formatTime(status.time, config.timeFormat) }),
-        }
-      case 'exit':
-        return {
-          Icon: LogOut,
-          colorClass: 'text-feedback-warning',
-          statusText: ts('statusExit', { time: formatTime(status.time, config.timeFormat) }),
-        }
-      case 'on_duty':
-        return { Icon: Clock, colorClass: 'text-text-primary', statusText: ts('statusOnDuty') }
-      case 'off_duty':
-        return { Icon: Coffee, colorClass: 'text-text-disabled', statusText: ts('statusOffDuty') }
-    }
-  })()
+  const { Icon, colorClass } = STATUS_STYLE[status.type]
+  const message = describeShiftStatus(status, config.timeFormat)
+  const statusText = ts(STATUS_KEYS[message.key], message.values)
 
-  const { Icon, colorClass, statusText } = display
   const swatchSize = isDefault ? 'h-5 w-5' : 'h-4 w-4'
   const iconSize = isDefault ? 16 : 14
   const textSize = isDefault ? 'text-base' : 'text-sm'

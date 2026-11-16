@@ -9,7 +9,9 @@
  * Celdas fuera del mes: div aria-hidden con opacity-40, no interactivas.
  */
 
-import { formatShiftTime } from '../utils/formatShiftTime'
+import { useTranslation } from 'react-i18next'
+import { formatShiftTime, describeShiftStatus } from '@/core/shift-format/shift-format'
+import { getCellLabels } from '../utils/cellLabels'
 import type { CalendarCell, CalendarDayResult } from '../hooks/useCalendar'
 
 // ─── Franja helper ────────────────────────────────────────────────────────────
@@ -28,32 +30,47 @@ interface FranjaProps {
 }
 
 function getFranjaBackground(color: string, status: CalendarDayResult['status']): string {
+  const strong = hexToRgba(color, 0.95)
+  const medium = hexToRgba(color, 0.6)
+  const faint = hexToRgba(color, 0.08)
+
   if (status.type === 'entry') {
     // Shift starts here — most intense, fades slightly to right (shift continues)
-    return `linear-gradient(to right, ${hexToRgba(color, 0.95)}, ${hexToRgba(color, 0.65)})`
+    return `linear-gradient(to right, ${strong}, ${hexToRgba(color, 0.65)})`
+  }
+  if (status.type === 'exit' && status.entryTime) {
+    // Shift ends and a new one starts the same day — dips in the middle (the rest)
+    return `linear-gradient(to right, ${medium}, ${faint} 50%, ${strong})`
   }
   if (status.type === 'exit') {
     // Shift ends here — medium on left (still running), fades to near-transparent (ending)
-    return `linear-gradient(to right, ${hexToRgba(color, 0.6)}, ${hexToRgba(color, 0.08)})`
+    return `linear-gradient(to right, ${medium}, ${faint})`
   }
   // on_duty — uniform medium, shift is stable
   return hexToRgba(color, 0.72)
 }
 
+const FRANJA_LABEL_CLASS =
+  'text-[10px] leading-none text-shift-text-on-light dark:text-shift-text-on-dark'
+
 function Franja({ result, index }: FranjaProps) {
   const { color, status, timeFormat } = result
-  const bg = getFranjaBackground(color, status)
+  const { start, end } = getCellLabels(status)
 
+  // Con dos horas: apiladas en mobile (arriba-izquierda / abajo-derecha), en línea desde md
   return (
     <div
-      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} items-start ${status.type === 'entry' ? 'justify-start' : 'justify-end'} flex-1 min-h-0 pt-0.5`}
-      style={{ background: bg }}
+      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} flex-col justify-between md:flex-row md:items-start flex-1 min-h-0 py-0.5`}
+      style={{ background: getFranjaBackground(color, status) }}
     >
-      {(status.type === 'entry' || status.type === 'exit') && (
-        <span
-          className={`text-[10px] leading-none ${status.type === 'entry' ? 'px-1.5' : 'px-2'} text-shift-text-on-light dark:text-shift-text-on-dark`}
-        >
-          {formatShiftTime(status.time, timeFormat)}
+      {start && (
+        <span className={`${FRANJA_LABEL_CLASS} px-1.5`}>
+          {formatShiftTime(start, timeFormat, { compact: true })}
+        </span>
+      )}
+      {end && (
+        <span className={`${FRANJA_LABEL_CLASS} ml-auto px-2`}>
+          {formatShiftTime(end, timeFormat, { compact: true })}
         </span>
       )}
     </div>
@@ -79,6 +96,7 @@ export function DayCell({
   onSelect,
   onFocus,
 }: DayCellProps) {
+  const { t } = useTranslation('calendar')
   const { isCurrentMonth, dayNumber, isToday, results, dateStr } = cell
 
   // Solo aplica inline style para gridLineColor personalizado (evita sobreescribir dark mode)
@@ -110,15 +128,17 @@ export function DayCell({
 
   // Aria-label descriptivo
   const statusText = (r: CalendarDayResult): string => {
-    const s = r.status
-    if (s.type === 'off_duty') return 'franco'
-    if (s.type === 'on_duty') return 'en turno'
-    if (s.type === 'entry') return `entrada ${formatShiftTime(s.time, r.timeFormat)}`
-    return `salida ${formatShiftTime(s.time, r.timeFormat)}`
+    const message = describeShiftStatus(r.status, r.timeFormat)
+    return t(`panel.${message.key}`, message.values)
   }
   const ariaLabel = [
-    `Día ${dayNumber}`,
-    ...results.map((r) => `${r.configName ?? 'Mi turno'}: ${statusText(r)}`),
+    t('cell.day', { day: dayNumber }),
+    ...results.map((r) =>
+      t('cell.config', {
+        name: r.configName ?? t('panel.defaultConfigName'),
+        status: statusText(r),
+      })
+    ),
   ].join('. ')
 
   return (

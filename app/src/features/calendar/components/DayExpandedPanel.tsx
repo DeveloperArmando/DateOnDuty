@@ -18,7 +18,7 @@ import { calculateShiftStatus } from '@/core/shift-calculator/shift-calculator'
 import type { ShiftStatus, TimeFormat, ShiftConfiguration } from '@/core/shift-calculator/types'
 import { Button } from '@/shared/components/Button'
 import { BottomSheet } from '@/shared/components/BottomSheet'
-import { formatShiftTime } from '../utils/formatShiftTime'
+import { describeShiftStatus } from '@/core/shift-format/shift-format'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -76,19 +76,13 @@ function DayConfigRow({ result, timeFormat }: DayConfigRowProps) {
           ? Clock
           : Coffee
 
-  const timeLabel =
-    status.type === 'entry' || status.type === 'exit'
-      ? formatShiftTime(status.time, timeFormat)
-      : null
+  const message = describeShiftStatus(status, timeFormat)
+  const descText = tc(`panel.${message.key}`, message.values)
 
-  const descText =
-    status.type === 'entry'
-      ? tc('panel.entry', { time: formatShiftTime(status.time, timeFormat) })
-      : status.type === 'exit'
-        ? tc('panel.exit', { time: formatShiftTime(status.time, timeFormat) })
-        : status.type === 'on_duty'
-          ? tc('panel.onDuty')
-          : tc('panel.offDuty')
+  // Hora(s) destacadas a la derecha: una sola, o las dos en orden cronológico
+  const { time, entry, exit } = message.values
+  const range = status.type === 'entry' ? [entry, exit] : [exit, entry]
+  const timeLabel = time ?? (entry && exit ? range.join(' – ') : null)
 
   const configName = config.name ?? tc('panel.defaultConfigName')
 

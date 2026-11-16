@@ -9,6 +9,8 @@
   "sectionAdditionals": "Turnos adicionales",
   "statusEntry": "Entrada a las {{time}}",
   "statusExit": "Salida a las {{time}}",
+  "statusEntryExit": "Entrada a las {{entry}}, salida a las {{exit}}",
+  "statusExitEntry": "Salida a las {{exit}}, entrada a las {{entry}}",
   "statusOnDuty": "En turno",
   "statusOffDuty": "Franco",
   "viewInCalendar": "Ver {{month}} {{year}} en el calendario"
