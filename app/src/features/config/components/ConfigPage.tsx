@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Plus } from 'lucide-react'
-import { useConfigStore } from '@/stores/config-store'
+import { useConfigStore, MAX_ADDITIONAL_CONFIGS } from '@/stores/config-store'
 import { Button } from '@/shared/components/Button'
 import type { ShiftConfiguration } from '@/core/shift-calculator/types'
 import { ConfigRow } from './ConfigRow'
@@ -35,7 +35,7 @@ export default function ConfigPage() {
 
   const defaultConfig = configs.find((c) => c.isDefault)!
   const additionals = configs.filter((c) => !c.isDefault)
-  const canAddMore = additionals.length < 10
+  const canAddMore = additionals.length < MAX_ADDITIONAL_CONFIGS
 
   // ─── Handlers ────────────────────────────────────────────────────────────
 

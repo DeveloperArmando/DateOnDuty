@@ -6,6 +6,7 @@
  * - Sin ?cfg=: no renderiza nada.
  * - ?cfg= inválido: modal de error con botón Cerrar.
  * - ?cfg= válido: modal con opciones (reemplazar / agregar / ignorar).
+ * - ?cfg= válido pero ya hay 10 adicionales: aviso de límite con acceso a /config (CE-51).
  * - En todos los casos, al cerrar: navigate("/", { replace: true }).
  */
 
@@ -15,7 +16,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AlertCircle } from 'lucide-react'
 import { decodeConfig } from '@/core/url-encoder/decoder'
-import { useConfigStore } from '@/stores/config-store'
+import { useConfigStore, MAX_ADDITIONAL_CONFIGS } from '@/stores/config-store'
 import { Button } from '@/shared/components/Button'
 import type { SharedConfigPayload } from '@/core/url-encoder/types'
 
@@ -43,9 +44,11 @@ function ReceiverModal({ encoded, onDone }: ReceiverModalProps) {
   const { t } = useTranslation('calendar')
   const { t: tc } = useTranslation()
   const navigate = useNavigate()
-  const { importFromUrl, getDefaultConfig } = useConfigStore()
+  const { configs, importFromUrl, getDefaultConfig } = useConfigStore()
 
   const defaultConfig = getDefaultConfig()
+  // Importar siempre suma una adicional (la nueva, o la default actual desplazada)
+  const limitReached = configs.filter((c) => !c.isDefault).length >= MAX_ADDITIONAL_CONFIGS
 
   const [decodeResult] = useState<{ payload: SharedConfigPayload | null; error: string | null }>(
     () => {
@@ -106,12 +109,18 @@ function ReceiverModal({ encoded, onDone }: ReceiverModalProps) {
 
   const handleConfirm = () => {
     if (!decodeResult.payload) return
+    // Un nombre en blanco dejaría un turno sin etiqueta: se usa el nombre sugerido
     if (mode === 'replace') {
-      importFromUrl(decodeResult.payload, true, replaceName.trim() || replaceName)
+      importFromUrl(decodeResult.payload, true, replaceName.trim() || t('importDefaultOldName'))
     } else {
-      importFromUrl(decodeResult.payload, false, addName.trim() || addName)
+      importFromUrl(decodeResult.payload, false, addName.trim() || t('importDefaultAddName'))
     }
     cleanAndClose()
+  }
+
+  const handleManageConfigs = () => {
+    onDone()
+    navigate('/config', { replace: true })
   }
 
   // ─── Error state ────────────────────────────────────────────────────────────
@@ -147,6 +156,43 @@ function ReceiverModal({ encoded, onDone }: ReceiverModalProps) {
             <Button variant="secondary" onClick={cleanAndClose}>
               {tc('close')}
             </Button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )
+  }
+
+  // ─── Limit reached (CE-51) ───────────────────────────────────────────────────
+
+  if (limitReached) {
+    return createPortal(
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-surface-overlay p-4"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) cleanAndClose()
+        }}
+      >
+        <div
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="import-limit-title"
+          className="w-full max-w-sm animate-modal-enter rounded-xl bg-surface-elevated p-6 shadow-lg"
+        >
+          <h2 id="import-limit-title" className="mb-2 text-base font-semibold text-text-primary">
+            {t('importTitle')}
+          </h2>
+          <p className="mb-6 text-sm text-text-secondary">{t('importLimitReached')}</p>
+          <div className="space-y-2">
+            <Button variant="primary" fullWidth onClick={handleManageConfigs}>
+              {t('importManageConfigs')}
+            </Button>
+            <div className="flex justify-center">
+              <Button variant="ghost" onClick={cleanAndClose}>
+                {tc('close')}
+              </Button>
+            </div>
           </div>
         </div>
       </div>,

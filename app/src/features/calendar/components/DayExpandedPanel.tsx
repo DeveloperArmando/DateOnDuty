@@ -191,8 +191,10 @@ export function DayExpandedPanel() {
   const handleClose = () => setExpandedDay(null)
 
   const handleViewInSearch = () => {
+    // La búsqueda abre en el día que se estaba viendo, no en hoy
+    const date = expandedDay
     handleClose()
-    navigate('/search')
+    navigate(date ? `/search?date=${date}` : '/search')
   }
 
   // ─── Date parsing + results ──────────────────────────────────────────────

@@ -1,11 +1,12 @@
 /**
  * Pantalla /search — Búsqueda de turno por fecha.
  * Mobile (< 1024px): una columna. Desktop (≥ 1024px): dos columnas.
- * Fecha pre-seleccionada: hoy. El cálculo es inmediato y síncrono (O(1) Core Engine).
+ * Fecha pre-seleccionada: la de ?date=YYYY-MM-DD si llega una válida (desde el panel
+ * del día); si no, hoy. El cálculo es inmediato y síncrono (O(1) Core Engine).
  */
 
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LogIn, LogOut, Clock, Coffee, CalendarDays } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -31,6 +32,20 @@ const STATUS_KEYS: Record<ShiftStatusMessageKey, string> = {
   exitEntry: 'statusExitEntry',
   onDuty: 'statusOnDuty',
   offDuty: 'statusOffDuty',
+}
+
+const DATE_PARAM_RE = /^\d{4}-\d{2}-\d{2}$/
+
+/** Fecha inicial de la búsqueda: el parámetro ?date= si es una fecha real; si no, hoy. */
+function getInitialDate(param: string | null): Date {
+  if (param && DATE_PARAM_RE.test(param)) {
+    const [year, month, day] = param.split('-').map(Number)
+    const date = new Date(year, month - 1, day)
+    const isRealDate =
+      date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+    if (isRealDate) return date
+  }
+  return new Date()
 }
 
 function getSchemeLabel(scheme: ShiftConfiguration['scheme']): string {
@@ -111,8 +126,11 @@ export default function SearchPage() {
   const { firstDayOfWeek } = useThemeStore()
   const { setViewDate } = useUIStore()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date())
+  const [selectedDate, setSelectedDate] = useState<Date>(() =>
+    getInitialDate(searchParams.get('date'))
+  )
 
   // Configs activas
   const activeConfigs = configs.filter((c) => c.isActive)

@@ -57,6 +57,7 @@ export function ConfigBanner({ onDismiss }: ConfigBannerProps) {
 
   const [elapsed, setElapsed] = useState(0)
   const [isLeaving, setIsLeaving] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
   // Verificar bannerSeen en render inicial (sin state para evitar re-render extra)
   const [seen] = useState(() => isBannerSeen())
@@ -92,15 +93,19 @@ export function ConfigBanner({ onDismiss }: ConfigBannerProps) {
     return () => clearInterval(intervalId)
   }, [seen, onboardingStartTime])
 
-  // Llama onDismiss tras la animación de salida (250ms)
+  // Tras la animación de salida (250ms) el banner se desmonta: si solo quedara
+  // invisible seguiría recibiendo foco de teclado y lectores de pantalla.
   useEffect(() => {
     if (!isLeaving) return
-    const t = setTimeout(onDismiss, 250)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => {
+      setDismissed(true)
+      onDismiss()
+    }, 250)
+    return () => clearTimeout(timer)
   }, [isLeaving, onDismiss])
 
-  // Ya fue visto en sesiones anteriores — no renderizar
-  if (seen) return null
+  // Ya fue visto en sesiones anteriores, o acaba de completar su timer — no renderizar
+  if (seen || dismissed) return null
 
   const progressPct = Math.min(100, (elapsed / 50) * 100)
 
@@ -109,7 +114,7 @@ export function ConfigBanner({ onDismiss }: ConfigBannerProps) {
       aria-live="polite"
       aria-label={t('bannerTitle')}
       className={[
-        'fixed left-0 right-0 top-14 z-[20]',
+        'fixed left-0 right-0 top-14 z-[20] sm:top-16',
         'cursor-pointer bg-feedback-info-surface shadow-[0_2px_4px_rgba(0,0,0,0.08)]',
         isLeaving ? 'animate-banner-leave' : 'animate-banner-enter',
       ].join(' ')}

@@ -19,6 +19,8 @@ interface UIStore {
   setExpandedDay: (date: string | null) => void
   /** Activa/desactiva el overlay de ayuda. */
   toggleHelp: () => void
+  /** Cierra el overlay de ayuda (idempotente: seguro ante un doble cierre). */
+  closeHelp: () => void
   /** Salta directamente a un mes y año concretos (usado desde Search). */
   setViewDate: (year: number, month: number) => void
   /** Marca el inicio del onboarding para que el timer de ConfigBanner sobreviva navegaciones. */
@@ -56,6 +58,8 @@ export const useUIStore = create<UIStore>()((set) => {
     setExpandedDay: (expandedDay) => set({ expandedDay }),
 
     toggleHelp: () => set((state) => ({ helpActive: !state.helpActive })),
+
+    closeHelp: () => set({ helpActive: false }),
 
     setViewDate: (year, month) => set({ currentYear: year, currentMonth: month }),
 

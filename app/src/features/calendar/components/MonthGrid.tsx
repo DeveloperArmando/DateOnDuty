@@ -62,8 +62,10 @@ export function MonthGrid() {
     // Determine direction
     const prevAbsMonth = prev.year * 12 + prev.month
     const currAbsMonth = currentYear * 12 + currentMonth
-    if (currAbsMonth > prevAbsMonth) setAnimType('month-next')
-    else if (currAbsMonth < prevAbsMonth) setAnimType('month-prev')
+    const forward = currAbsMonth > prevAbsMonth
+    // Mismo mes en otro año = salto de año (swipe horizontal o flechas de año del AppBar)
+    if (prev.month === currentMonth) setAnimType(forward ? 'year-next' : 'year-prev')
+    else setAnimType(forward ? 'month-next' : 'month-prev')
     lastViewRef.current = { month: currentMonth, year: currentYear }
     const id = setTimeout(() => setAnimType(null), 200)
     return () => clearTimeout(id)

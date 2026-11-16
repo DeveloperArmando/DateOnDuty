@@ -44,6 +44,9 @@
   "importOldNameLabel": "Nombre para tu turno actual",
   "importConfirm": "Aceptar",
   "importDefaultAddName": "Turno importado",
+  "importDefaultOldName": "Mi turno anterior",
+  "importLimitReached": "Has alcanzado el límite de 10 turnos adicionales. Elimina al menos uno para poder guardar este.",
+  "importManageConfigs": "Administrar mis turnos",
 
   "days": {
     "sun": "Dom",

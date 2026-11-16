@@ -131,6 +131,7 @@ export function AppBar() {
           <Button
             variant="ghost"
             size="sm"
+            data-help-toggle
             aria-label={tc('helpButton')}
             aria-expanded={helpActive}
             onClick={toggleHelp}

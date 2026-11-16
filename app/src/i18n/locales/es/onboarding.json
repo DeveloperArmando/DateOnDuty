@@ -8,7 +8,9 @@
   "helpSwipeMonths": "Desliza arriba o abajo para cambiar de mes",
   "helpSwipeYears": "Desliza a los lados para cambiar de año",
   "helpTapDay": "Toca un día para ver el detalle",
-  "helpShare": "Comparte tu turno con el botón de compartir",
+  "helpColors": "La franja de color marca tus días de turno: intensa al entrar, se desvanece al salir",
+  "helpSearch": "Usa «Buscar fecha» para consultar cualquier día",
+  "helpShare": "Comparte tu turno desde Configuración, con el botón de compartir",
   "helpClose": "Entendido",
 
   "bannerTimeRemaining": "Tiempo restante del aviso"
