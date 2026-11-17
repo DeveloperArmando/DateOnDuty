@@ -14,7 +14,9 @@ function generateId(): string {
   crypto.getRandomValues(bytes)
   bytes[6] = (bytes[6] & 0x0f) | 0x40
   bytes[8] = (bytes[8] & 0x3f) | 0x80
-  const h = Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('')
+  const h = Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
 }
 
@@ -49,6 +51,9 @@ function parseScheme(s: string): ShiftScheme {
   return '24x48' // fallback defensivo
 }
 
+/** Máximo de configuraciones adicionales (sin contar la default). */
+export const MAX_ADDITIONAL_CONFIGS = 10
+
 // ─── Interface ────────────────────────────────────────────────────────────────
 
 interface ConfigStore {
@@ -67,7 +72,8 @@ interface ConfigStore {
   removeConfig: (id: string) => void
   /**
    * Promueve una config adicional a default de forma atómica:
-   * - La nueva default queda con isDefault=true, name=null, isActive=true.
+   * - La nueva default queda con isDefault=true, name=null, isActive=true y pasa
+   *   al inicio del array (invariante: el primer elemento es siempre la default).
    * - La anterior default pasa a adicional con isDefault=false, name=oldDefaultName.
    */
   promoteToDefault: (id: string, oldDefaultName: string) => void
@@ -77,8 +83,9 @@ interface ConfigStore {
    * Importa una configuración desde URL compartida.
    * - asDefault=true: reemplaza la default actual (name → nombre para la config anterior).
    * - asDefault=false: agrega como adicional con nombre `name`.
+   * En ambos casos el resultado suma una adicional: sin efecto si ya hay 10 (ver CE-51).
    */
-  importFromUrl: (payload: SharedConfigPayload, asDefault: boolean, name?: string) => void
+  importFromUrl: (payload: SharedConfigPayload, asDefault: boolean, name: string) => void
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -107,7 +114,7 @@ export const useConfigStore = create<ConfigStore>()(
       addConfig: (config) =>
         set((state) => {
           const additionals = state.configs.filter((c) => !c.isDefault)
-          if (additionals.length >= 10) return state
+          if (additionals.length >= MAX_ADDITIONAL_CONFIGS) return state
           return {
             configs: [...state.configs, { ...config, id: generateId() }],
           }
@@ -123,13 +130,17 @@ export const useConfigStore = create<ConfigStore>()(
           const target = state.configs.find((c) => c.id === id)
           if (!target || target.isDefault) return state
 
-          return {
-            configs: state.configs.map((c) => {
-              if (c.isDefault) return { ...c, isDefault: false, name: oldDefaultName }
-              if (c.id === id) return { ...c, isDefault: true, name: null, isActive: true }
-              return c
-            }),
+          const newDefault: ShiftConfiguration = {
+            ...target,
+            isDefault: true,
+            name: null,
+            isActive: true,
           }
+          const rest = state.configs
+            .filter((c) => c.id !== id)
+            .map((c) => (c.isDefault ? { ...c, isDefault: false, name: oldDefaultName } : c))
+
+          return { configs: [newDefault, ...rest] }
         }),
 
       toggleActive: (id) =>
@@ -141,13 +152,15 @@ export const useConfigStore = create<ConfigStore>()(
 
       importFromUrl: (payload, asDefault, name) =>
         set((state) => {
-          const scheme = parseScheme(payload.s)
+          // Importar siempre suma una adicional: la nueva, o la default anterior desplazada
+          const additionals = state.configs.filter((c) => !c.isDefault)
+          if (additionals.length >= MAX_ADDITIONAL_CONFIGS) return state
 
           const newConfig: ShiftConfiguration = {
             id: generateId(),
             isDefault: asDefault,
-            name: asDefault ? null : (name ?? 'Turno importado'),
-            scheme,
+            name: asDefault ? null : name,
+            scheme: parseScheme(payload.s),
             entryTime: payload.e,
             cycleStartDate: payload.d,
             timeFormat: '24h',
@@ -155,22 +168,15 @@ export const useConfigStore = create<ConfigStore>()(
             isActive: true,
           }
 
-          if (asDefault) {
-            // La nueva config encabeza el array. La anterior default pasa a adicional.
-            const oldDefaultName = name ?? 'Mi turno anterior'
-            return {
-              configs: [
-                newConfig,
-                ...state.configs.map((c) =>
-                  c.isDefault ? { ...c, isDefault: false, name: oldDefaultName } : c
-                ),
-              ],
-            }
-          }
+          if (!asDefault) return { configs: [...state.configs, newConfig] }
 
-          const additionals = state.configs.filter((c) => !c.isDefault)
-          if (additionals.length >= 10) return state
-          return { configs: [...state.configs, newConfig] }
+          // La nueva config encabeza el array. La anterior default pasa a adicional.
+          return {
+            configs: [
+              newConfig,
+              ...state.configs.map((c) => (c.isDefault ? { ...c, isDefault: false, name } : c)),
+            ],
+          }
         }),
     }),
     { name: 'dod-configs' }

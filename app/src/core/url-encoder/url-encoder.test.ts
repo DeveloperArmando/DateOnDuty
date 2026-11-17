@@ -58,6 +58,21 @@ describe('encodeConfig', () => {
     expect(payload['timeFormat']).toBeUndefined()
   })
 
+  it('nunca produce "+" ni "/" (el parámetro viaja sin escapar en el query string)', () => {
+    // El payload es JSON ASCII sin ">", "~" ni "?", únicos caracteres que generan "+" o "/"
+    // en Base64 estándar. Si el payload cambia, esta prueba avisa antes de romper enlaces.
+    const schemes = ['24x48', '12x36', '48x48', { type: 'custom', workHours: 12, restHours: 72 }]
+    const times = ['00:00', '06:30', '08:00', '19:45', '23:59']
+    const colors = ['#2563EB', '#DC2626', '#0F766E', '#FFFFFF', '#000000', '#abcdef']
+    for (const scheme of schemes as ShiftConfiguration['scheme'][]) {
+      for (const entryTime of times) {
+        for (const color of colors) {
+          expect(encodeConfig(makeConfig({ scheme, entryTime, color }))).not.toMatch(/[+/]/)
+        }
+      }
+    }
+  })
+
   it('produce resultados diferentes para configuraciones distintas', () => {
     const a = encodeConfig(makeConfig({ color: '#DC2626' }))
     const b = encodeConfig(makeConfig({ color: '#15803D' }))
@@ -179,6 +194,18 @@ describe('decodeConfig — payloads inválidos (deben lanzar Error)', () => {
   it('lanza error con fecha inválida', () => {
     const encoded = btoa(JSON.stringify({ s: '24x48', e: '08:00', d: '2026-13-01', c: '#2563EB' }))
     expect(() => decodeConfig(encoded)).toThrow(/fecha/)
+  })
+
+  it('lanza error con fecha imposible del calendario (31 de febrero)', () => {
+    const encoded = btoa(JSON.stringify({ s: '24x48', e: '08:00', d: '2026-02-31', c: '#2563EB' }))
+    expect(() => decodeConfig(encoded)).toThrow(/fecha/)
+  })
+
+  it('acepta el 29 de febrero solo en año bisiesto', () => {
+    const leap = btoa(JSON.stringify({ s: '24x48', e: '08:00', d: '2028-02-29', c: '#2563EB' }))
+    const notLeap = btoa(JSON.stringify({ s: '24x48', e: '08:00', d: '2027-02-29', c: '#2563EB' }))
+    expect(decodeConfig(leap).d).toBe('2028-02-29')
+    expect(() => decodeConfig(notLeap)).toThrow(/fecha/)
   })
 
   it('lanza error con color inválido (sin #)', () => {

@@ -1,0 +1,48 @@
+name: CI
+
+# Corre en cada push de cualquier rama: las ramas de trabajo se validan antes de abrir el PR.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: lint · format · typecheck · test · build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - run: npm ci
+
+      # Cada verificación corre aunque una anterior falle: un solo run muestra todo lo que hay que arreglar.
+      - run: npm run lint
+        if: ${{ !cancelled() }}
+
+      - name: npm run format:check
+        id: format
+        if: ${{ !cancelled() }}
+        run: npm run format:check
+
+      - name: Mostrar el diff de formato pendiente
+        if: ${{ failure() && steps.format.conclusion == 'failure' }}
+        run: |
+          npm run format:write
+          git --no-pager diff --no-color
+
+      - run: npm run typecheck
+        if: ${{ !cancelled() }}
+      - run: npm run test
+        if: ${{ !cancelled() }}
+      - run: npm run build
+        if: ${{ !cancelled() }}

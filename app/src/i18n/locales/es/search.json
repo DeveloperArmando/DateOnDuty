@@ -1,6 +1,7 @@
 {
   "title": "Buscar fecha",
   "dateLabel": "Fecha a consultar",
+  "dayAriaLabel": "{{day}} de {{month}} de {{year}}",
   "searchButton": "Consultar",
   "resultTitle": "Resultado para {{date}}",
   "noActiveConfigs": "No tienes turnos activos configurados.",
@@ -9,6 +10,8 @@
   "sectionAdditionals": "Turnos adicionales",
   "statusEntry": "Entrada a las {{time}}",
   "statusExit": "Salida a las {{time}}",
+  "statusEntryExit": "Entrada a las {{entry}}, salida a las {{exit}}",
+  "statusExitEntry": "Salida a las {{exit}}, entrada a las {{entry}}",
   "statusOnDuty": "En turno",
   "statusOffDuty": "Franco",
   "viewInCalendar": "Ver {{month}} {{year}} en el calendario"

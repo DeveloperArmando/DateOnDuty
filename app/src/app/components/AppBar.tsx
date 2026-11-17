@@ -59,14 +59,14 @@ export function AppBar() {
   return (
     <header
       role="banner"
-      className="sticky top-0 z-[30] flex h-14 items-center gap-1 border-b border-border-default bg-surface-elevated px-4 sm:h-16"
+      className="sticky top-0 z-[30] flex h-14 items-center gap-0.5 border-b border-border-default bg-surface-elevated px-1.5 sm:h-16 sm:gap-1 sm:px-4"
     >
       {isCalendarRoute ? (
         <>
           {/* Left: Settings */}
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             aria-label={t('settings')}
             onClick={() => navigate('/config')}
           >
@@ -76,22 +76,22 @@ export function AppBar() {
           {/* Center: Year + Month navigation */}
           <nav
             aria-label={tc('calendarNavLabel')}
-            className="flex flex-1 items-center justify-center gap-0.5"
+            className="flex min-w-0 flex-1 items-center justify-center sm:gap-0.5"
           >
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               aria-label={tc('prevYear')}
               onClick={() => navigateYear(-1)}
             >
               <ChevronLeft size={16} aria-hidden="true" />
             </Button>
-            <span className="min-w-[3.25rem] text-center text-sm font-medium text-text-primary">
+            <span className="min-w-[2.5rem] text-center text-sm font-medium text-text-primary sm:min-w-[3.25rem]">
               {currentYear}
             </span>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               aria-label={tc('nextYear')}
               onClick={() => navigateYear(1)}
             >
@@ -100,18 +100,18 @@ export function AppBar() {
 
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               aria-label={tc('prevMonth')}
               onClick={() => navigateMonth(-1)}
             >
               <ChevronUp size={16} aria-hidden="true" />
             </Button>
-            <span className="min-w-[5.5rem] text-center text-sm font-medium capitalize text-text-primary">
+            <span className="min-w-[4.875rem] text-center text-sm font-medium capitalize text-text-primary sm:min-w-[5.5rem]">
               {monthName}
             </span>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               aria-label={tc('nextMonth')}
               onClick={() => navigateMonth(1)}
             >
@@ -122,7 +122,7 @@ export function AppBar() {
           {/* Right: Theme + Help */}
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             aria-label={themeAriaLabel}
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
           >
@@ -130,7 +130,8 @@ export function AppBar() {
           </Button>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
+            data-help-toggle
             aria-label={tc('helpButton')}
             aria-expanded={helpActive}
             onClick={toggleHelp}
@@ -141,7 +142,7 @@ export function AppBar() {
       ) : (
         <>
           {/* Left: Back */}
-          <Button variant="ghost" size="sm" aria-label={t('back')} onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" aria-label={t('back')} onClick={() => navigate(-1)}>
             <ChevronLeft size={20} aria-hidden="true" />
           </Button>
 
@@ -153,7 +154,7 @@ export function AppBar() {
           {/* Right: Theme */}
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             aria-label={themeAriaLabel}
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
           >

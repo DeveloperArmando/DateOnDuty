@@ -10,7 +10,7 @@ import type { LucideIcon } from 'lucide-react'
 import { LoadingDots } from './LoadingDots'
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonSize = 'sm' | 'md' | 'lg' | 'icon'
 
 export interface ButtonProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -39,9 +39,11 @@ const sizeClasses: Record<ButtonSize, string> = {
   sm: 'px-3 py-1.5 min-h-[32px] text-sm',
   md: 'px-4 py-2.5 min-h-[40px] text-base',
   lg: 'px-6 py-3 min-h-[48px] text-base font-semibold',
+  // Solo ícono: compacto en mobile para que las barras con varios botones quepan en 360px
+  icon: 'px-1 py-1.5 min-h-[32px] min-w-[28px] text-sm sm:px-3',
 }
 
-const iconSizes: Record<ButtonSize, number> = { sm: 16, md: 18, lg: 20 }
+const iconSizes: Record<ButtonSize, number> = { sm: 16, md: 18, lg: 20, icon: 16 }
 
 export function Button({
   variant = 'primary',
@@ -86,7 +88,7 @@ export function Button({
       {...rest}
     >
       {loading ? (
-        <LoadingDots size={size} />
+        <LoadingDots size={size === 'icon' ? 'sm' : size} />
       ) : (
         <>
           {IconLeft && <IconLeft size={iconSizes[size]} aria-hidden="true" />}

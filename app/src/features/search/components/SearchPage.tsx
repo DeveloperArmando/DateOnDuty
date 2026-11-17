@@ -1,11 +1,12 @@
 /**
  * Pantalla /search — Búsqueda de turno por fecha.
  * Mobile (< 1024px): una columna. Desktop (≥ 1024px): dos columnas.
- * Fecha pre-seleccionada: hoy. El cálculo es inmediato y síncrono (O(1) Core Engine).
+ * Fecha pre-seleccionada: la de ?date=YYYY-MM-DD si llega una válida (desde el panel
+ * del día); si no, hoy. El cálculo es inmediato y síncrono (O(1) Core Engine).
  */
 
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LogIn, LogOut, Clock, Coffee, CalendarDays } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -15,26 +16,36 @@ import { useConfigStore } from '@/stores/config-store'
 import { useThemeStore } from '@/stores/theme-store'
 import { useUIStore } from '@/stores/ui-store'
 import { calculateShiftStatus } from '@/core/shift-calculator/shift-calculator'
-import type { ShiftConfiguration, ShiftStatus, TimeFormat } from '@/core/shift-calculator/types'
+import { describeShiftStatus } from '@/core/shift-format/shift-format'
+import type { ShiftStatusMessageKey } from '@/core/shift-format/shift-format'
+import type { ShiftConfiguration, ShiftStatus } from '@/core/shift-calculator/types'
 import { Button } from '@/shared/components/Button'
 import { SearchDatePicker } from './SearchDatePicker'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatTime(time: string, timeFormat: TimeFormat): string {
-  const [hoursStr, minutesStr] = time.split(':')
-  const hours = parseInt(hoursStr, 10)
-  switch (timeFormat) {
-    case '24h':
-      return time
-    case 'military':
-      return `${String(hours).padStart(2, '0')}${minutesStr}`
-    case '12h': {
-      const period = hours >= 12 ? 'PM' : 'AM'
-      const h12 = hours % 12 || 12
-      return `${h12}:${minutesStr} ${period}`
-    }
+/** Clave i18n (namespace search) para cada variante de estado del día. */
+const STATUS_KEYS: Record<ShiftStatusMessageKey, string> = {
+  entry: 'statusEntry',
+  exit: 'statusExit',
+  entryExit: 'statusEntryExit',
+  exitEntry: 'statusExitEntry',
+  onDuty: 'statusOnDuty',
+  offDuty: 'statusOffDuty',
+}
+
+const DATE_PARAM_RE = /^\d{4}-\d{2}-\d{2}$/
+
+/** Fecha inicial de la búsqueda: el parámetro ?date= si es una fecha real; si no, hoy. */
+function getInitialDate(param: string | null): Date {
+  if (param && DATE_PARAM_RE.test(param)) {
+    const [year, month, day] = param.split('-').map(Number)
+    const date = new Date(year, month - 1, day)
+    const isRealDate =
+      date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+    if (isRealDate) return date
   }
+  return new Date()
 }
 
 function getSchemeLabel(scheme: ShiftConfiguration['scheme']): string {
@@ -44,10 +55,11 @@ function getSchemeLabel(scheme: ShiftConfiguration['scheme']): string {
 
 // ─── ShiftResultCard ──────────────────────────────────────────────────────────
 
-interface StatusDisplay {
-  Icon: LucideIcon
-  colorClass: string
-  statusText: string
+const STATUS_STYLE: Record<ShiftStatus['type'], { Icon: LucideIcon; colorClass: string }> = {
+  entry: { Icon: LogIn, colorClass: 'text-feedback-success' },
+  exit: { Icon: LogOut, colorClass: 'text-feedback-warning' },
+  on_duty: { Icon: Clock, colorClass: 'text-text-primary' },
+  off_duty: { Icon: Coffee, colorClass: 'text-text-disabled' },
 }
 
 interface ShiftResultCardProps {
@@ -66,28 +78,10 @@ function ShiftResultCard({ config, status, isDefault = false }: ShiftResultCardP
 
   const schemeLabel = getSchemeLabel(config.scheme)
 
-  const display: StatusDisplay = (() => {
-    switch (status.type) {
-      case 'entry':
-        return {
-          Icon: LogIn,
-          colorClass: 'text-feedback-success',
-          statusText: ts('statusEntry', { time: formatTime(status.time, config.timeFormat) }),
-        }
-      case 'exit':
-        return {
-          Icon: LogOut,
-          colorClass: 'text-feedback-warning',
-          statusText: ts('statusExit', { time: formatTime(status.time, config.timeFormat) }),
-        }
-      case 'on_duty':
-        return { Icon: Clock, colorClass: 'text-text-primary', statusText: ts('statusOnDuty') }
-      case 'off_duty':
-        return { Icon: Coffee, colorClass: 'text-text-disabled', statusText: ts('statusOffDuty') }
-    }
-  })()
+  const { Icon, colorClass } = STATUS_STYLE[status.type]
+  const message = describeShiftStatus(status, config.timeFormat)
+  const statusText = ts(STATUS_KEYS[message.key], message.values)
 
-  const { Icon, colorClass, statusText } = display
   const swatchSize = isDefault ? 'h-5 w-5' : 'h-4 w-4'
   const iconSize = isDefault ? 16 : 14
   const textSize = isDefault ? 'text-base' : 'text-sm'
@@ -132,8 +126,11 @@ export default function SearchPage() {
   const { firstDayOfWeek } = useThemeStore()
   const { setViewDate } = useUIStore()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date())
+  const [selectedDate, setSelectedDate] = useState<Date>(() =>
+    getInitialDate(searchParams.get('date'))
+  )
 
   // Configs activas
   const activeConfigs = configs.filter((c) => c.isActive)

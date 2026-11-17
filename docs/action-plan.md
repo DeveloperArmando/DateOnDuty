@@ -1,6 +1,6 @@
 # Plan de Acción — DateOnDuty MVP
 
-**Última actualización:** 2026-02-24
+**Última actualización:** 2026-11-16
 
 ---
 
@@ -8,7 +8,7 @@
 
 | Área | Estado |
 |---|---|
-| Core Engine (shift-calculator, url-encoder, wcag-contrast) | ✅ Completo (90 tests) |
+| Core Engine (shift-calculator, shift-format, url-encoder, wcag-contrast) | ✅ Completo (107 tests) |
 | Stores (config-store, ui-store, theme-store) | ✅ Completo |
 | App Shell (AppShell, AppBar, BottomBar, Footer, router, i18n) | ✅ Completo |
 | Shared components (Button, LoadingDots, ErrorMessage, Toast, scrollToError) | ✅ Completo |
@@ -20,6 +20,9 @@
 | Feature: Feedback | 🔴 Stub (pendiente Fase 4) |
 | Feature: Legal (Terms, Privacy) | 🔴 Stub (pendiente Fase 5) |
 | Theme toggle | ✅ Completo (en AppBar, via theme-store) |
+| Ayuda del calendario (HelpOverlay) | 🟡 Versión de leyenda (D-043); badges numerados pendientes |
+| CI (GitHub Actions) | ✅ `.github/workflows/ci.yml` (D-046) |
+| Deploy (Cloudflare Pages) | ✅ Producción desde `master` en `dateonduty.pages.dev`; vista previa por rama |
 
 ---
 

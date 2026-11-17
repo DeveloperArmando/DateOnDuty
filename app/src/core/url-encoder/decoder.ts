@@ -34,11 +34,16 @@ function validateEntryTime(e: unknown): e is string {
 
 /**
  * Valida el campo `d` (cycleStartDate): "YYYY-MM-DD" con fecha real del calendario.
+ * `Date.parse` no sirve aquí: acepta fechas imposibles como "2026-02-31" y las
+ * desborda al mes siguiente. Se reconstruye la fecha y se compara campo a campo.
  */
 function validateDate(d: unknown): d is string {
   if (typeof d !== 'string' || !DATE_RE.test(d)) return false
-  const ts = Date.parse(d)
-  return !isNaN(ts)
+  const [year, month, day] = d.split('-').map(Number)
+  const date = new Date(Date.UTC(year, month - 1, day))
+  return (
+    date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+  )
 }
 
 /**

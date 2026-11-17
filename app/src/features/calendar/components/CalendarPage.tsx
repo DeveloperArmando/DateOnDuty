@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { MonthGrid } from './MonthGrid'
 import { DayExpandedPanel } from './DayExpandedPanel'
+import { HelpOverlay } from './HelpOverlay'
 import { ConfigBanner } from '@/features/onboarding/components/ConfigBanner'
 import { SwipeAnimation } from '@/features/onboarding/components/SwipeAnimation'
 import { SharedConfigReceiver } from '@/features/sharing/components/SharedConfigReceiver'
@@ -48,6 +49,7 @@ export default function CalendarPage() {
 
       <MonthGrid />
       <DayExpandedPanel />
+      <HelpOverlay />
 
       {showAnimation && <SwipeAnimation onComplete={handleAnimationComplete} />}
     </div>

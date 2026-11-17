@@ -1,5 +1,7 @@
 # Incidencias detectadas — Auditoría 2026-06-09
 
+> **Estado: resueltas.** Las incidencias 1–6 y las tareas D1/D2 se cerraron en el PR #2 (`fix/i18n-hardcoded-strings`) y en D-039/D-040. Los strings que esta auditoría no detectó (aria-label de `DayCell`, abreviaturas de `ShiftConfigForm`, fallbacks de `config-store`) se corrigieron en la auditoría de noviembre de 2026. Se conserva como registro histórico.
+
 Instrucciones para corregir las violaciones de reglas del proyecto detectadas en la auditoría.
 Todas las rutas de código son relativas a `app/`. Las verificaciones automáticas
 (`typecheck`, `lint`, `format:check`, `test`, `build`) ya pasan — estos cambios NO deben romperlas.
