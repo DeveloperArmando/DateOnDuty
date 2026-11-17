@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **DateOnDuty** is a frontend-only web app for rotating shift workers (24x48, 12x36, 48x48, etc.) to visualize their work calendar, query any date, and share their schedule. No backend in MVP (v1.0) — all logic runs in the browser with localStorage as the only persistence.
 
-The project is in **implementation phase**. Design system is complete. Core Engine and Zustand stores are implemented. Feature components are not yet started.
+The project is in **implementation phase**. Core Engine, stores, and the Calendar, Config, Search, Onboarding and Sharing features are implemented. Feedback (Formspree form) and the legal pages are still stubs — see `docs/action-plan.md`.
 
 The authoritative references are:
 - `docs/DateOnDuty_PRD_v2.md` — product requirements and user stories
@@ -38,7 +38,7 @@ The authoritative references are:
 | ESLint + Prettier | — | Lint/format |
 | Husky + lint-staged | — | Pre-commit hooks |
 
-**Hosting:** Cloudflare Pages (static), auto-deploy from `main` branch.
+**Hosting:** Cloudflare Pages (static). Not deployed yet; the repo's default branch is `master`.
 
 **Strictly prohibited additions:** Next.js, Redux, Axios, Moment.js, IndexedDB, BroadcastChannel, Sentry, analytics, service workers, or any SSR/SSG in MVP.
 
@@ -57,7 +57,7 @@ npm run test         # Vitest (all tests)
 npm run test path/to/file.test.ts  # Run single test file
 ```
 
-CI pipeline runs: `lint` → `format:check` → `typecheck` → `test` on every push. All must pass before merge to `main`.
+CI (`.github/workflows/ci.yml`) runs `lint` → `format:check` → `typecheck` → `test` → `build` on every push, on any branch. All must pass before merging.
 
 ---
 
@@ -78,7 +78,7 @@ Core Engine   → Pure TypeScript functions (no React, no DOM, no localStorage)
 ```
 src/
 ├── app/           # Root component, router config, global providers
-├── core/          # Pure TS functions only — shift calculator, URL encoder/decoder, WCAG contrast, validation
+├── core/          # Pure TS functions only — shift calculator, shift format, URL encoder/decoder, WCAG contrast
 ├── stores/        # Zustand stores: config-store, ui-store, theme-store
 ├── features/      # Feature slices: calendar, config, search, sharing, onboarding, feedback, theme, legal
 │   └── <feature>/
@@ -185,6 +185,8 @@ if positionInCycle < workHours → in shift (check for entry/exit within the day
 if positionInCycle >= workHours → off duty
 ```
 
-Result types: `{ type: "entry", time }`, `{ type: "exit", time }`, `{ type: "on_duty" }`, `{ type: "off_duty" }`.
+Result types: `{ type: "entry", time, exitTime? }`, `{ type: "exit", time, entryTime? }`, `{ type: "on_duty" }`, `{ type: "off_duty" }`.
 
-Test cases must cover: exact start date, rest day, multi-day shift middle day, midnight-crossing shift, Feb 29 leap year, distant past/future dates, dates before `cycleStartDate`.
+Every entry and every exit is reported on the calendar day it happens. When a day holds both (12h shifts, rests shorter than 24h) the first event sets `type` and the second goes in the optional field (D-041). To turn a status into text, always use `describeShiftStatus` from `core/shift-format` — never branch on `status.type` in a component to build a sentence.
+
+Test cases must cover: exact start date, rest day, multi-day shift middle day, midnight-crossing shift, same-day entry and exit, Feb 29 leap year, distant past/future dates, dates before `cycleStartDate`, and parity with the v1 app (D-042).

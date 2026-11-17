@@ -1,7 +1,7 @@
 # DateOnDuty — Decisions Log
 
 **Proyecto:** DateOnDuty
-**Última actualización:** Febrero 2026
+**Última actualización:** Noviembre 2026
 **Propósito:** Registro único de todas las decisiones del proyecto. Cualquier agente o persona que vaya a implementar algo debe leer este archivo antes de proponer alternativas — las decisiones aquí documentadas **no se reabren sin justificación explícita del Product Owner**.
 
 ---
@@ -352,4 +352,42 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 
 ---
 
-*Última entrada: D-040 — Junio 2026*
+### D-041 — Un día puede tener entrada y salida: ambas se reportan
+**Decisión:** `calculateShiftStatus` reporta toda entrada y toda salida en el día calendario en que ocurre (`[00:00, 24:00)`). Si un día contiene dos eventos, el primero define `type` y el segundo viaja en un campo opcional: `entry` + `exitTime` (ej. 12x36 con entrada 08:00) o `exit` + `entryTime` (ej. personalizado 12x12 con entrada 19:00). Una salida exactamente a las 00:00 se reporta en el día que inicia.
+**Alternativas:** Dejar `entry` solo y que cada componente derivara la salida del config (era el plan anotado en los tests, pero ningún componente lo hacía); devolver una lista de eventos por día (más general, rompe a todos los consumidores).
+**Razón:** Con turnos de 12h la app mostraba "Entrada 08:00" y nunca la salida; con descansos < 24h se perdía la reentrada del mismo día. Con trabajo y descanso ≥ 12h caben como máximo dos eventos por día, así que dos campos opcionales bastan y son retrocompatibles.
+**Consecuencias:** `describeShiftStatus` (`core/shift-format`) es la única fuente de verdad para describir un día; DayCell, DayExpandedPanel y SearchPage la consumen. Qué horas caben en la celda del calendario se decide en `features/calendar/utils/cellLabels.ts`.
+
+### D-042 — Paridad con la v1 como prueba de regresión
+**Decisión:** La suite del core incluye una prueba que compara la v2 contra el algoritmo original de `calendario-de-turno-laboral` (ciclo de 3 días anclado al 2023-08-02) para todos los días de 2020 a 2030.
+**Alternativas:** Ninguna documentada.
+**Razón:** La v1 es la referencia validada por el usuario real (esquema 24x48). La configuración equivalente en la v2 es `24x48` con `cycleStartDate: 2023-08-01`.
+**Consecuencias:** Cualquier cambio al algoritmo que altere el calendario del usuario original rompe la suite.
+
+### D-043 — HelpOverlay: versión de leyenda en el MVP
+**Decisión:** El botón [?] abre un BottomSheet/modal con la leyenda de gestos y elementos. Los badges numerados superpuestos a la UI (spec completa en `docs/design/component-specs/HelpOverlay.md`) quedan como mejora posterior.
+**Alternativas:** Implementar la spec completa; ocultar el botón hasta tenerla.
+**Razón:** El botón existía y cambiaba `helpActive`, pero ningún componente lo leía: era un control muerto en la pantalla principal.
+**Consecuencias:** `ui-store` expone `closeHelp` (idempotente). Las claves `helpColors` y `helpSearch` se añadieron al namespace `onboarding`.
+
+### D-044 — `/search?date=YYYY-MM-DD`
+**Decisión:** La pantalla de búsqueda acepta la fecha inicial por query string. "Ver en buscador de fechas" del panel del día la envía.
+**Alternativas:** Pasar la fecha por `location.state` (se pierde al recargar); guardarla en `ui-store`.
+**Razón:** El botón llevaba a la búsqueda abierta en hoy, perdiendo el día que se estaba consultando. El query string además permite enlazar una fecha concreta.
+**Consecuencias:** Un valor ausente o inválido cae a hoy, sin mensaje de error.
+
+### D-045 — El tema se aplica al instante también desde el formulario
+**Decisión:** El radio de tema del formulario de la config principal escribe directo en `theme-store`, igual que el botón del AppBar. Primer día de la semana y color de líneas siguen aplicándose al guardar.
+**Alternativas:** Mantener la copia local y sincronizarla con el store.
+**Razón:** La copia local quedaba desfasada si el tema se cambiaba desde el AppBar con el formulario abierto, y al guardar revertía ese cambio.
+**Consecuencias:** Ninguna para otros componentes.
+
+### D-046 — CI en GitHub Actions
+**Decisión:** `.github/workflows/ci.yml` corre `lint → format:check → typecheck → test → build` en cada push de cualquier rama (así una rama de trabajo se valida antes de abrir el pull request).
+**Alternativas:** Depender solo del hook pre-commit de Husky.
+**Razón:** `CLAUDE.md` describía este pipeline pero no existía ningún workflow; el hook de Husky solo corre en máquinas donde se instalaron dependencias.
+**Consecuencias:** La rama por defecto del repo es `master` (D-034 menciona `main`): el despliegue a Cloudflare Pages, cuando se configure, debe apuntar a `master`.
+
+---
+
+*Última entrada: D-046 — Noviembre 2026*
