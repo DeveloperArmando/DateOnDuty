@@ -224,8 +224,7 @@ export function MonthGrid() {
 
   const gridKey = currentYear * 12 + currentMonth
 
-  const lineColor =
-    gridLineColor !== '#E5E7EB' ? gridLineColor : 'var(--color-border-default)'
+  const lineColor = gridLineColor !== '#E5E7EB' ? gridLineColor : 'var(--color-border-default)'
 
   return (
     <div
@@ -257,7 +256,10 @@ export function MonthGrid() {
       {/* Celdas del mes — key fuerza remount en cada navegación */}
       <div
         key={gridKey}
-        className={['grid grid-cols-7 flex-1 [grid-auto-rows:1fr]', animType ? ANIM_CLASS[animType] : '']
+        className={[
+          'grid grid-cols-7 flex-1 [grid-auto-rows:1fr]',
+          animType ? ANIM_CLASS[animType] : '',
+        ]
           .filter(Boolean)
           .join(' ')}
       >

@@ -102,8 +102,7 @@ export function DayCell({
   // Solo aplica inline style para gridLineColor personalizado (evita sobreescribir dark mode)
   const borderStyle = gridLineColor !== '#E5E7EB' ? { borderColor: gridLineColor } : undefined
 
-  const cellBase =
-    'relative flex flex-col border-b border-r border-border-default overflow-hidden'
+  const cellBase = 'relative flex flex-col border-b border-r border-border-default overflow-hidden'
 
   // Celdas fuera del mes: no interactivas, aria-hidden
   if (!isCurrentMonth) {
