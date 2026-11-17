@@ -1,0 +1,31 @@
+name: CI
+
+# Corre en cada push de cualquier rama: las ramas de trabajo se validan antes de abrir el PR.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: lint · format · typecheck · test · build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build
