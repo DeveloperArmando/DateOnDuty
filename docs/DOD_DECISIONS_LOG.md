@@ -386,7 +386,7 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 **Decisión:** `.github/workflows/ci.yml` corre `lint → format:check → typecheck → test → build` en cada push de cualquier rama (así una rama de trabajo se valida antes de abrir el pull request).
 **Alternativas:** Depender solo del hook pre-commit de Husky.
 **Razón:** `CLAUDE.md` describía este pipeline pero no existía ningún workflow; el hook de Husky solo corre en máquinas donde se instalaron dependencias.
-**Consecuencias:** La rama por defecto del repo es `master` (D-034 menciona `main`): el despliegue a Cloudflare Pages, cuando se configure, debe apuntar a `master`.
+**Consecuencias:** La rama por defecto del repo es `master` (D-034 menciona `main`). Cloudflare Pages ya despliega producción desde `master` y una vista previa por rama; esa vista previa es la que permite revisar lo visual de un cambio antes de mergearlo.
 
 ---
 

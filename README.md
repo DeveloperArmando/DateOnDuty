@@ -4,7 +4,9 @@ Calendario para personas con **turnos rotativos** (24x48, 12x36, 48x48 o un esqu
 
 Nació para un policía con rol 24x48 que calculaba sus turnos de memoria, y para que su familia y compañeros pudieran consultarlos sin preguntarle.
 
-> **Estado:** en desarrollo. Calendario, configuración, búsqueda por fecha, onboarding y compartir por enlace están implementados. Faltan el formulario de feedback, las páginas legales y el despliegue. Ver [`docs/action-plan.md`](docs/action-plan.md).
+**Demo:** <https://dateonduty.pages.dev>
+
+> **Estado:** en desarrollo. Calendario, configuración, búsqueda por fecha, onboarding y compartir por enlace están implementados. Faltan el formulario de feedback y las páginas legales. Ver [`docs/action-plan.md`](docs/action-plan.md).
 
 ## Qué hace
 
@@ -65,7 +67,7 @@ npm run lint && npm run format:check && npm run typecheck
 npm run build        # build de producción
 ```
 
-El mismo pipeline corre en GitHub Actions en cada push ([`ci.yml`](.github/workflows/ci.yml)).
+El mismo pipeline corre en GitHub Actions en cada push, y Cloudflare Pages publica una vista previa por rama ([`ci.yml`](.github/workflows/ci.yml)).
 
 ## Estructura
 

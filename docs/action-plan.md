@@ -22,7 +22,7 @@
 | Theme toggle | ✅ Completo (en AppBar, via theme-store) |
 | Ayuda del calendario (HelpOverlay) | 🟡 Versión de leyenda (D-043); badges numerados pendientes |
 | CI (GitHub Actions) | ✅ `.github/workflows/ci.yml` (D-046) |
-| Deploy (Cloudflare Pages) | 🔴 Pendiente |
+| Deploy (Cloudflare Pages) | ✅ Producción desde `master` en `dateonduty.pages.dev`; vista previa por rama |
 
 ---
 

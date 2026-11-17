@@ -38,7 +38,7 @@ The authoritative references are:
 | ESLint + Prettier | — | Lint/format |
 | Husky + lint-staged | — | Pre-commit hooks |
 
-**Hosting:** Cloudflare Pages (static). Not deployed yet; the repo's default branch is `master`.
+**Hosting:** Cloudflare Pages (static), project `dateonduty`. Production (`https://dateonduty.pages.dev`) deploys from `master`; every other branch gets a preview at `https://<branch-slug>.dateonduty.pages.dev`.
 
 **Strictly prohibited additions:** Next.js, Redux, Axios, Moment.js, IndexedDB, BroadcastChannel, Sentry, analytics, service workers, or any SSR/SSG in MVP.
 
