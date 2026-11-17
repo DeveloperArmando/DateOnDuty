@@ -240,13 +240,13 @@ export function DayExpandedPanel() {
         className="sticky top-0 z-10 flex items-center gap-1 border-b border-border-default bg-surface-elevated px-2 py-1.5"
       >
         {/* Prev month */}
-        <Button variant="ghost" size="sm" aria-label={tc('prevMonth')} onClick={handlePrevMonth}>
+        <Button variant="ghost" size="icon" aria-label={tc('prevMonth')} onClick={handlePrevMonth}>
           <ChevronLeft size={14} aria-hidden="true" />
           <ChevronLeft size={14} className="-ml-2.5" aria-hidden="true" />
         </Button>
 
         {/* Prev day */}
-        <Button variant="ghost" size="sm" aria-label={tc('prevDay')} onClick={handlePrevDay}>
+        <Button variant="ghost" size="icon" aria-label={tc('prevDay')} onClick={handlePrevDay}>
           <ChevronLeft size={16} aria-hidden="true" />
         </Button>
 
@@ -260,26 +260,28 @@ export function DayExpandedPanel() {
         </h2>
 
         {/* Next day */}
-        <Button variant="ghost" size="sm" aria-label={tc('nextDay')} onClick={handleNextDay}>
+        <Button variant="ghost" size="icon" aria-label={tc('nextDay')} onClick={handleNextDay}>
           <ChevronRight size={16} aria-hidden="true" />
         </Button>
 
         {/* Next month */}
-        <Button variant="ghost" size="sm" aria-label={tc('nextMonth')} onClick={handleNextMonth}>
+        <Button variant="ghost" size="icon" aria-label={tc('nextMonth')} onClick={handleNextMonth}>
           <ChevronRight size={14} aria-hidden="true" />
           <ChevronRight size={14} className="-ml-2.5" aria-hidden="true" />
         </Button>
 
-        {/* Desktop close button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={tc('panel.closePanel')}
-          onClick={handleClose}
-          className="hidden lg:flex"
-        >
-          <X size={18} aria-hidden="true" />
-        </Button>
+        {/* Desktop close button. El wrapper oculta en mobile: `hidden` en el propio
+            Button pierde contra su `inline-flex` y el botón le quitaba espacio a la fecha. */}
+        <div className="hidden lg:block">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={tc('panel.closePanel')}
+            onClick={handleClose}
+          >
+            <X size={18} aria-hidden="true" />
+          </Button>
+        </div>
       </div>
 
       {/* ── Content (animates on navigation) ── */}

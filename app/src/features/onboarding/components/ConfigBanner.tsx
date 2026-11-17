@@ -114,7 +114,8 @@ export function ConfigBanner({ onDismiss }: ConfigBannerProps) {
       aria-live="polite"
       aria-label={t('bannerTitle')}
       className={[
-        'fixed left-0 right-0 top-14 z-[20] sm:top-16',
+        // En el flujo del layout (no fixed): empuja la cuadrícula en vez de tapar su primera fila
+        'relative z-[20] shrink-0',
         'cursor-pointer bg-feedback-info-surface shadow-[0_2px_4px_rgba(0,0,0,0.08)]',
         isLeaving ? 'animate-banner-leave' : 'animate-banner-enter',
       ].join(' ')}

@@ -180,15 +180,17 @@ export function DayCell({
         </div>
       )}
 
+      {/* Badges +N: en la esquina superior, junto al número del día. Abajo chocaban
+          con la hora de salida de la última franja visible. */}
       {/* Badge overflow — mobile (>2) */}
       {mobileOverflow > 0 && (
-        <span className="sm:hidden absolute bottom-0.5 right-0.5 text-xs text-text-secondary leading-none">
+        <span className="sm:hidden absolute top-1 right-0.5 text-[10px] text-text-secondary leading-none">
           +{mobileOverflow}
         </span>
       )}
       {/* Badge overflow — desktop (>3) */}
       {desktopOverflow > 0 && (
-        <span className="hidden sm:block absolute bottom-0.5 right-0.5 text-xs text-text-secondary leading-none">
+        <span className="hidden sm:block absolute top-1 right-0.5 text-[10px] text-text-secondary leading-none">
           +{desktopOverflow}
         </span>
       )}
