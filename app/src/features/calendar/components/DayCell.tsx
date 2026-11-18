@@ -2,77 +2,89 @@
  * Celda individual del calendario mensual.
  * Componente puramente presentacional — los cálculos de turno vienen ya resueltos.
  *
- * Franjas: se muestran solo cuando el turno es entry/exit/on_duty.
- *   · Mobile (<640px): máx 2 franjas visibles, resto → badge +N
- *   · Desktop (≥640px): máx 3 franjas visibles, resto → badge +N
+ * Cada turno es una columna que representa las 24 h del día de arriba (00:00) a
+ * abajo (24:00). El color solo llena las horas en turno; el franco queda en blanco:
+ *   · día de entrada → el color empieza en la hora de entrada (hora arriba) y baja
+ *   · día de salida  → el color baja desde arriba hasta la hora de salida (hora abajo)
+ *   · 12x36          → solo el tramo entre entrada y salida
+ * Las columnas van dentro de un recuadro con borde y fondo más oscuro (el "día").
+ *   · Mobile (<640px): máx 2 columnas, resto → badge +N
+ *   · Desktop (≥640px): máx 3 columnas, resto → badge +N
  *
  * Celdas fuera del mes: div aria-hidden con opacity-40, no interactivas.
  */
 
+import type { CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatShiftTime, describeShiftStatus } from '@/core/shift-format/shift-format'
-import { getCellLabels } from '../utils/cellLabels'
+import { getDaySegments } from '@/core/shift-format/day-segments'
+import type { DaySegment } from '@/core/shift-format/day-segments'
+import { contrastRatio } from '@/core/wcag-contrast/wcag-contrast'
 import type { CalendarCell, CalendarDayResult } from '../hooks/useCalendar'
 
-// ─── Franja helper ────────────────────────────────────────────────────────────
+// ─── Columna de turno ─────────────────────────────────────────────────────────
 
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `rgba(${r},${g},${b},${alpha})`
+const MINUTES_PER_DAY = 24 * 60
+/** Alto mínimo (px) de un tramo con hora, para que la etiqueta siempre quepa. */
+const MIN_LABELED_HEIGHT = '14px'
+
+/** Texto blanco u oscuro, el que mejor contraste dé sobre el color del turno. */
+function labelColor(background: string): string {
+  const onWhite = contrastRatio(background, '#FFFFFF') ?? 0
+  const onDark = contrastRatio(background, '#1F2937') ?? 0
+  return onWhite >= onDark ? '#FFFFFF' : '#1F2937'
 }
 
-interface FranjaProps {
+/** Posición vertical del tramo; los que tocan un borde del día se anclan a él. */
+function segmentStyle(seg: DaySegment): CSSProperties {
+  const height = `${((seg.endMin - seg.startMin) / MINUTES_PER_DAY) * 100}%`
+  const hasLabel = Boolean(seg.startLabel || seg.endLabel)
+  const fitted = hasLabel ? `max(${height}, ${MIN_LABELED_HEIGHT})` : height
+  if (seg.endMin === MINUTES_PER_DAY) return { bottom: 0, height: fitted }
+  if (seg.startMin === 0) return { top: 0, height: fitted }
+  return { top: `${(seg.startMin / MINUTES_PER_DAY) * 100}%`, height }
+}
+
+interface ShiftColumnProps {
   result: CalendarDayResult
-  /** Índice dentro del array de franjas visibles (0-based). Índice 2 = solo desktop. */
+  /** Índice entre las columnas visibles (0-based). Índice 2 = solo desktop. */
   index: number
+  /** Cuántas columnas comparten la celda: con varias, las horas se acortan en mobile. */
+  total: number
 }
 
-function getFranjaBackground(color: string, status: CalendarDayResult['status']): string {
-  const strong = hexToRgba(color, 0.95)
-  const medium = hexToRgba(color, 0.6)
-  const faint = hexToRgba(color, 0.08)
-
-  if (status.type === 'entry') {
-    // Shift starts here — most intense, fades slightly to right (shift continues)
-    return `linear-gradient(to right, ${strong}, ${hexToRgba(color, 0.65)})`
-  }
-  if (status.type === 'exit' && status.entryTime) {
-    // Shift ends and a new one starts the same day — dips in the middle (the rest)
-    return `linear-gradient(to right, ${medium}, ${faint} 50%, ${strong})`
-  }
-  if (status.type === 'exit') {
-    // Shift ends here — medium on left (still running), fades to near-transparent (ending)
-    return `linear-gradient(to right, ${medium}, ${faint})`
-  }
-  // on_duty — uniform medium, shift is stable
-  return hexToRgba(color, 0.72)
-}
-
-const FRANJA_LABEL_CLASS =
-  'text-[10px] leading-none text-shift-text-on-light dark:text-shift-text-on-dark'
-
-function Franja({ result, index }: FranjaProps) {
+function ShiftColumn({ result, index, total }: ShiftColumnProps) {
   const { color, status, timeFormat } = result
-  const { start, end } = getCellLabels(status)
+  const textColor = labelColor(color)
 
-  // Con dos horas: apiladas en mobile (arriba-izquierda / abajo-derecha), en línea desde md
+  const renderTime = (time: string) =>
+    total > 1 ? (
+      <>
+        <span className="sm:hidden">{formatShiftTime(time, timeFormat, { short: true })}</span>
+        <span className="hidden sm:inline">
+          {formatShiftTime(time, timeFormat, { compact: true })}
+        </span>
+      </>
+    ) : (
+      formatShiftTime(time, timeFormat, { compact: true })
+    )
+
   return (
-    <div
-      className={`${index === 2 ? 'hidden sm:flex' : 'flex'} flex-col justify-between md:flex-row md:items-start flex-1 min-h-0 py-0.5`}
-      style={{ background: getFranjaBackground(color, status) }}
-    >
-      {start && (
-        <span className={`${FRANJA_LABEL_CLASS} px-1.5`}>
-          {formatShiftTime(start, timeFormat, { compact: true })}
-        </span>
-      )}
-      {end && (
-        <span className={`${FRANJA_LABEL_CLASS} ml-auto px-2`}>
-          {formatShiftTime(end, timeFormat, { compact: true })}
-        </span>
-      )}
+    <div className={`${index === 2 ? 'hidden sm:block' : ''} relative min-w-0 flex-1`}>
+      {getDaySegments(status).map((seg) => (
+        <div
+          key={seg.startMin}
+          className="absolute inset-x-0 overflow-hidden whitespace-nowrap text-[10px] leading-none"
+          style={{ ...segmentStyle(seg), backgroundColor: color, color: textColor }}
+        >
+          {seg.startLabel && (
+            <span className="absolute left-1 top-0.5">{renderTime(seg.startLabel)}</span>
+          )}
+          {seg.endLabel && (
+            <span className="absolute bottom-0.5 right-1">{renderTime(seg.endLabel)}</span>
+          )}
+        </div>
+      ))}
     </div>
   )
 }
@@ -119,11 +131,12 @@ export function DayCell({
     )
   }
 
-  // Franjas visibles (excluye off_duty)
-  const franjas = results.filter((r) => r.status.type !== 'off_duty')
-  const displayedFranjas = franjas.slice(0, 3)
-  const mobileOverflow = Math.max(0, franjas.length - 2)
-  const desktopOverflow = Math.max(0, franjas.length - 3)
+  // Turnos con algo que pintar hoy (excluye franco)
+  const active = results.filter((r) => r.status.type !== 'off_duty')
+  const columns = active.slice(0, 3)
+  const visibleOnMobile = Math.min(columns.length, 2)
+  const mobileOverflow = Math.max(0, active.length - 2)
+  const desktopOverflow = Math.max(0, active.length - 3)
 
   // Aria-label descriptivo
   const statusText = (r: CalendarDayResult): string => {
@@ -171,14 +184,17 @@ export function DayCell({
         )}
       </div>
 
-      {/* Franjas de turno */}
-      {displayedFranjas.length > 0 && (
-        <div className="flex flex-col flex-1 min-h-0 pt-2 gap-px">
-          {displayedFranjas.map((r, i) => (
-            <Franja key={r.configId} result={r} index={i} />
-          ))}
-        </div>
-      )}
+      {/* Las 24 h del día: recuadro con borde y fondo más oscuro; el franco queda vacío */}
+      <div className="mx-1 mb-1 flex min-h-0 flex-1 gap-px overflow-hidden rounded-sm border border-day-track-border bg-day-track">
+        {columns.map((r, i) => (
+          <ShiftColumn
+            key={r.configId}
+            result={r}
+            index={i}
+            total={i === 2 ? columns.length : visibleOnMobile}
+          />
+        ))}
+      </div>
 
       {/* Badges +N: en la esquina superior, junto al número del día. Abajo chocaban
           con la hora de salida de la última franja visible. */}

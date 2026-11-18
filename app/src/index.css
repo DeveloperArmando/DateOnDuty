@@ -25,6 +25,11 @@
   --color-border-default: #e5e7eb;
   --color-border-strong: #9ca3af;
 
+  /* DÍA — tramo de 24 h dentro de la celda: más oscuro que la superficie para que el
+     color del turno y el blanco de franco se distingan, con borde propio */
+  --color-day-track: #eceff4;
+  --color-day-track-border: #b9c1cd;
+
   /* COLORES — FEEDBACK */
   --color-feedback-error: #dc2626;
   --color-feedback-error-surface: #fef2f2;
@@ -130,6 +135,10 @@
   /* BORDE */
   --color-border-default: #374151;
   --color-border-strong: #4b5563;
+
+  /* DÍA */
+  --color-day-track: #0b1019;
+  --color-day-track-border: #4b5563;
 
   /* FEEDBACK */
   --color-feedback-error: #f87171;

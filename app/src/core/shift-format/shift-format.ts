@@ -5,6 +5,11 @@ import type { ShiftStatus, TimeFormat } from '../shift-calculator/types'
 export interface FormatShiftTimeOptions {
   /** En 12h omite los minutos cuando son :00 ("8 AM"). Para espacios reducidos. */
   compact?: boolean
+  /**
+   * Para columnas muy angostas: con minutos :00 deja solo la hora ("8h" en 24h y
+   * militar, "8 AM" en 12h); con otros minutos usa el formato completo.
+   */
+  short?: boolean
 }
 
 /**
@@ -22,6 +27,11 @@ export function formatShiftTime(
   const [hStr, mStr] = time.split(':')
   const h = parseInt(hStr, 10)
   const m = parseInt(mStr, 10)
+
+  if (options.short && m === 0) {
+    if (format === '12h') return `${h % 12 === 0 ? 12 : h % 12} ${h >= 12 ? 'PM' : 'AM'}`
+    return `${h}h`
+  }
 
   if (format === '24h') return time
 
