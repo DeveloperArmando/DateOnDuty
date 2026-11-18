@@ -1,6 +1,6 @@
+import { isPresetScheme } from '../shift-calculator/types'
 import type { SharedConfigPayload } from './types'
 
-const VALID_PRESETS = new Set(['24x48', '12x36', '48x48'])
 const CUSTOM_SCHEME_RE = /^C(\d+):(\d+)$/
 const ENTRY_TIME_RE = /^\d{2}:\d{2}$/
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
@@ -8,12 +8,12 @@ const HEX_COLOR_RE = /^#[0-9A-Fa-f]{6}$/
 
 /**
  * Valida el campo `s` (scheme):
- *   - Preset: "24x48" | "12x36" | "48x48"
+ *   - Preset: cualquiera de PRESET_SCHEMES (24x48, 12x36, 12x24, 48x48)
  *   - Custom: "C{work}:{rest}" con workHours y restHours entre 12 y 72
  */
 function validateScheme(s: unknown): s is string {
   if (typeof s !== 'string') return false
-  if (VALID_PRESETS.has(s)) return true
+  if (isPresetScheme(s)) return true
 
   const match = CUSTOM_SCHEME_RE.exec(s)
   if (!match) return false

@@ -3,7 +3,7 @@
  * Formato: btoa(JSON.stringify(payload))
  *
  * Campo `s` — esquema:
- *   - Preset: "24x48" | "12x36" | "48x48"
+ *   - Preset: "24x48" | "12x36" | "12x24" | "48x48"
  *   - Custom: "C{workHours}:{restHours}" (ej: "C12:24")
  */
 export interface SharedConfigPayload {

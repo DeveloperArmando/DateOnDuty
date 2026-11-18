@@ -390,4 +390,24 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 
 ---
 
-*Última entrada: D-046 — Noviembre 2026*
+### D-047 — Celda del día como línea de tiempo vertical
+**Decisión:** Cada turno es una columna que representa las 24 h del día, de arriba (00:00) a abajo (24:00). El color llena solo las horas en turno y el franco queda en blanco. La hora de entrada va arriba del bloque de color y la de salida abajo. La celda completa del día lleva borde marcado y fondo un poco más oscuro (`--color-day-cell`, `--color-day-cell-border`); el área donde se pinta no tiene fondo propio. Con varios turnos las columnas van lado a lado (máx. 2 en móvil, 3 en escritorio) y las horas se acortan en móvil (`formatShiftTime` con `short`).
+**Alternativas:** Degradado de izquierda a derecha por franja horizontal (versión anterior; no distinguía bien entrada, salida y franco); fondo oscuro solo en el área de horarios (probado, descartado por Armando).
+**Razón:** Pedido de Armando tras revisar la vista previa: se entiende de un vistazo cuándo empieza y termina el turno y que "en blanco" es franco.
+**Consecuencias:** `core/shift-format/day-segments.ts` traduce un `ShiftStatus` a tramos; `DayCell` solo los dibuja. El color del texto de las horas se elige por contraste con el color del turno.
+
+### D-048 — Formato de hora por defecto: 12 h (AM/PM)
+**Decisión:** El formato de hora por defecto es `12h`, tanto en la config inicial como en el formulario y al importar un enlace. En el formulario aparece primero.
+**Alternativas:** Mantener `24h`.
+**Razón:** Pedido de Armando: es el formato que usa su público (México).
+**Consecuencias:** Solo cambia el valor inicial. Una configuración ya guardada conserva su formato, porque no se puede distinguir lo elegido de lo heredado. El formato interno de `entryTime` sigue siendo `HH:mm` de 24 h.
+
+### D-049 — Nuevo esquema predeterminado 12x24 y lista única de presets
+**Decisión:** Se agrega el preset `12x24` (12 h de trabajo, 24 de descanso; ciclo de 36 h). Los presets viven en `PRESET_SCHEMES` (`core/shift-calculator/types.ts`) y decoder, store y formulario derivan de ahí.
+**Alternativas:** Dejarlo solo como esquema personalizado (ya era posible con 12 y 24).
+**Razón:** Pedido de Armando; es un rol real y frecuente. Tener cada lista de presets copiada en cuatro archivos hacía fácil olvidar uno.
+**Consecuencias:** Los enlaces compartidos con `s: "12x24"` solo los entienden versiones que incluyan este preset; los anteriores mostrarán "enlace no válido".
+
+---
+
+*Última entrada: D-049 — Noviembre 2026*

@@ -30,6 +30,10 @@ describe('resolveScheme', () => {
     expect(resolveScheme('12x36')).toEqual({ workHours: 12, restHours: 36 })
   })
 
+  it('resuelve 12x24 correctamente', () => {
+    expect(resolveScheme('12x24')).toEqual({ workHours: 12, restHours: 24 })
+  })
+
   it('resuelve 48x48 correctamente', () => {
     expect(resolveScheme('48x48')).toEqual({ workHours: 48, restHours: 48 })
   })
@@ -202,9 +206,9 @@ describe('calculateShiftStatus — custom 12x12, entrada 19:00 (turno nocturno d
   })
 })
 
-describe('calculateShiftStatus — custom 12x24, entrada 07:00 (alterna día y noche)', () => {
+describe('calculateShiftStatus — 12x24 (preset), entrada 07:00 (alterna día y noche)', () => {
   const config = makeConfig({
-    scheme: { type: 'custom', workHours: 12, restHours: 24 },
+    scheme: '12x24',
     entryTime: '07:00',
     cycleStartDate: '2026-02-22',
   })
@@ -223,6 +227,18 @@ describe('calculateShiftStatus — custom 12x24, entrada 07:00 (alterna día y n
       time: '07:00',
       exitTime: '19:00',
     })
+  })
+
+  it('el preset 12x24 equivale al esquema personalizado de 12 y 24 horas', () => {
+    const custom = makeConfig({
+      scheme: { type: 'custom', workHours: 12, restHours: 24 },
+      entryTime: '07:00',
+      cycleStartDate: '2026-02-22',
+    })
+    for (let day = 0; day < 36; day++) {
+      const date = new Date(Date.UTC(2026, 1, 1 + day)).toISOString().slice(0, 10)
+      expect(calculateShiftStatus(config, date)).toEqual(calculateShiftStatus(custom, date))
+    }
   })
 })
 

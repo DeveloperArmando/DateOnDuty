@@ -7,7 +7,7 @@
  *   · día de entrada → el color empieza en la hora de entrada (hora arriba) y baja
  *   · día de salida  → el color baja desde arriba hasta la hora de salida (hora abajo)
  *   · 12x36          → solo el tramo entre entrada y salida
- * Las columnas van dentro de un recuadro con borde y fondo más oscuro (el "día").
+ * La celda del día completa lleva borde marcado y un fondo un poco más oscuro.
  *   · Mobile (<640px): máx 2 columnas, resto → badge +N
  *   · Desktop (≥640px): máx 3 columnas, resto → badge +N
  *
@@ -114,14 +114,14 @@ export function DayCell({
   // Solo aplica inline style para gridLineColor personalizado (evita sobreescribir dark mode)
   const borderStyle = gridLineColor !== '#E5E7EB' ? { borderColor: gridLineColor } : undefined
 
-  const cellBase = 'relative flex flex-col border-b border-r border-border-default overflow-hidden'
+  const cellBase = 'relative flex flex-col border-b border-r overflow-hidden'
 
   // Celdas fuera del mes: no interactivas, aria-hidden
   if (!isCurrentMonth) {
     return (
       <div
         aria-hidden="true"
-        className={`${cellBase} h-full opacity-40 pointer-events-none`}
+        className={`${cellBase} border-border-default h-full opacity-40 pointer-events-none`}
         style={borderStyle}
       >
         <div className="flex justify-center shrink-0 pt-2.5">
@@ -162,7 +162,7 @@ export function DayCell({
       aria-expanded={isSelected}
       className={[
         cellBase,
-        'h-full cursor-pointer bg-surface-base hover:bg-surface-elevated',
+        'h-full cursor-pointer border-day-cell-border bg-day-cell hover:bg-surface-elevated',
         'transition-colors duration-fast ease-default',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus-ring',
         isSelected ? 'ring-2 ring-inset ring-interactive-primary' : '',
@@ -174,9 +174,10 @@ export function DayCell({
       onFocus={() => onFocus(dateStr)}
     >
       {/* Número del día */}
-      <div className="flex h-8 sm:h-9 justify-center pt-2 shrink-0">
+      {/* Centrado vertical: el círculo de "hoy" queda con el mismo aire arriba y abajo */}
+      <div className="flex h-8 sm:h-9 shrink-0 items-center justify-center">
         {isToday ? (
-          <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-interactive-primary text-interactive-primary-text text-xs sm:text-sm font-bold">
+          <span className="flex h-[22px] w-[22px] sm:h-7 sm:w-7 items-center justify-center rounded-full bg-interactive-primary text-interactive-primary-text text-xs sm:text-sm font-bold">
             {dayNumber}
           </span>
         ) : (
@@ -184,8 +185,8 @@ export function DayCell({
         )}
       </div>
 
-      {/* Las 24 h del día: recuadro con borde y fondo más oscuro; el franco queda vacío */}
-      <div className="mx-1 mb-1 flex min-h-0 flex-1 gap-px overflow-hidden rounded-sm border border-day-track-border bg-day-track">
+      {/* Las 24 h del día: el color solo llena las horas en turno; el franco deja ver la celda */}
+      <div className="mx-1 mb-1 flex min-h-0 flex-1 gap-px overflow-hidden rounded-sm">
         {columns.map((r, i) => (
           <ShiftColumn
             key={r.configId}

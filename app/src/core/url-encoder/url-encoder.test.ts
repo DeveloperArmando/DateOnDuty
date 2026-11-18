@@ -98,6 +98,11 @@ describe('decodeConfig — payloads válidos', () => {
     expect(decodeConfig(encoded).s).toBe('12x36')
   })
 
+  it('decodifica preset 12x24', () => {
+    const encoded = encodeConfig(makeConfig({ scheme: '12x24' }))
+    expect(decodeConfig(encoded).s).toBe('12x24')
+  })
+
   it('decodifica preset 48x48', () => {
     const encoded = makeEncoded({ s: '48x48', e: '00:00', d: '2026-03-01', c: '#15803D' })
     expect(decodeConfig(encoded).s).toBe('48x48')

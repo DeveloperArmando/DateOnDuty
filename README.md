@@ -1,6 +1,6 @@
 # DateOnDuty
 
-Calendario para personas con **turnos rotativos** (24x48, 12x36, 48x48 o un esquema propio). Responde en segundos a dos preguntas: *¿qué turno me toca hoy?* y *¿qué turno me toca el día X?*
+Calendario para personas con **turnos rotativos** (24x48, 12x36, 12x24, 48x48 o un esquema propio). Responde en segundos a dos preguntas: *¿qué turno me toca hoy?* y *¿qué turno me toca el día X?*
 
 Nació para un policía con rol 24x48 que calculaba sus turnos de memoria, y para que su familia y compañeros pudieran consultarlos sin preguntarle.
 
@@ -23,7 +23,7 @@ La primera versión es [`calendario-de-turno-laboral`](https://github.com/Develo
 
 | | v1 | v2 (este repo) |
 |---|---|---|
-| Esquemas | Solo 24x48, fijo en el código | 24x48, 12x36, 48x48 y personalizado (12–72 h) |
+| Esquemas | Solo 24x48, fijo en el código | 24x48, 12x36, 12x24, 48x48 y personalizado (12–72 h) |
 | Fecha de referencia | Constante en el código | Configurable por el usuario |
 | Hora de entrada y salida | No | Sí, con turnos que cruzan medianoche |
 | Consultar una fecha | Desplazarse por el año | Búsqueda directa |
