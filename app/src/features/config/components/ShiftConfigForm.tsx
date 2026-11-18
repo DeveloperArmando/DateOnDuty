@@ -592,9 +592,9 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
         </Button>
       </form>
 
-      {/* Toast de confirmación — navega a /config al cerrarse */}
+      {/* Toast de confirmación — regresa al calendario al cerrarse (D-050) */}
       {showToast && (
-        <Toast variant="success" message={t('configSaved')} onDismiss={() => navigate('/config')} />
+        <Toast variant="success" message={t('configSaved')} onDismiss={() => navigate('/')} />
       )}
     </>
   )

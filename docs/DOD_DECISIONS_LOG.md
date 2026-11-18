@@ -408,6 +408,12 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 **Razón:** Pedido de Armando; es un rol real y frecuente. Tener cada lista de presets copiada en cuatro archivos hacía fácil olvidar uno.
 **Consecuencias:** Los enlaces compartidos con `s: "12x24"` solo los entienden versiones que incluyan este preset; los anteriores mostrarán "enlace no válido".
 
+### D-050 — Al guardar un turno se regresa al calendario
+**Decisión:** Tras guardar una configuración (nueva o editada) y cerrarse el toast de confirmación, la app navega a `/` (calendario) en lugar de `/config`.
+**Alternativas:** Regresar a "Mis turnos" (comportamiento anterior, de la spec de `ShiftConfigForm`).
+**Razón:** Pedido de Armando: lo que la persona quiere ver después de guardar es cómo quedó su calendario.
+**Consecuencias:** Para agregar otro turno seguido hay que volver a entrar a Configuración. El botón de volver del AppBar sigue usando el historial.
+
 ---
 
-*Última entrada: D-049 — Noviembre 2026*
+*Última entrada: D-050 — Noviembre 2026*
