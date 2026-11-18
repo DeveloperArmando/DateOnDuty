@@ -29,6 +29,7 @@
   "pageTitle": {
     "config": "Mis turnos",
     "configDetail": "Editar turno",
+    "configNew": "Nuevo turno",
     "search": "Buscar fecha",
     "feedback": "Enviar feedback",
     "terms": "Términos y condiciones",
