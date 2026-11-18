@@ -75,7 +75,7 @@ function ShiftColumn({ result, index, total }: ShiftColumnProps) {
       {getDaySegments(status).map((seg) => (
         <div
           key={seg.startMin}
-          className="absolute inset-x-0 overflow-hidden whitespace-nowrap text-[10px] leading-none"
+          className="absolute inset-x-0 overflow-hidden whitespace-nowrap rounded-sm text-[10px] leading-none"
           style={{ ...segmentStyle(seg), backgroundColor: color, color: textColor }}
         >
           {seg.startLabel && (
@@ -187,8 +187,9 @@ export function DayCell({
         )}
       </div>
 
-      {/* Las 24 h del día: el color solo llena las horas en turno; el franco queda en blanco */}
-      <div className="m-1 flex min-h-0 flex-1 gap-px overflow-hidden rounded-sm">
+      {/* Las 24 h del día: el color solo llena las horas en turno; el franco queda en blanco.
+          Cada tramo redondea sus cuatro esquinas, toque o no el borde del día. */}
+      <div className="m-1 flex min-h-0 flex-1 gap-px">
         {columns.map((r, i) => (
           <ShiftColumn
             key={r.configId}
