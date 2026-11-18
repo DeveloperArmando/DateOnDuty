@@ -25,9 +25,9 @@
   --color-border-default: #e5e7eb;
   --color-border-strong: #9ca3af;
 
-  /* DÍA — la celda completa del día: fondo un poco más oscuro que la superficie y
-     borde más marcado, para que cada día se lea como una unidad */
-  --color-day-cell: #eceff4;
+  /* DÍA — encabezado con el número: fondo un poco más oscuro que la superficie; la celda
+     lleva un borde más marcado, para que cada día se lea como una unidad */
+  --color-day-header: #e3e7ee;
   --color-day-cell-border: #c4cbd6;
 
   /* COLORES — FEEDBACK */
@@ -137,7 +137,7 @@
   --color-border-strong: #4b5563;
 
   /* DÍA */
-  --color-day-cell: #0b1019;
+  --color-day-header: #0b1019;
   --color-day-cell-border: #4b5563;
 
   /* FEEDBACK */

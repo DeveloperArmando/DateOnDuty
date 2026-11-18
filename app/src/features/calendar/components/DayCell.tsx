@@ -7,7 +7,8 @@
  *   · día de entrada → el color empieza en la hora de entrada (hora arriba) y baja
  *   · día de salida  → el color baja desde arriba hasta la hora de salida (hora abajo)
  *   · 12x36          → solo el tramo entre entrada y salida
- * La celda del día completa lleva borde marcado y un fondo un poco más oscuro.
+ * La celda lleva borde marcado y el encabezado con el número del día, un fondo más oscuro;
+ * el área donde se pinta el turno queda clara.
  *   · Mobile (<640px): máx 2 columnas, resto → badge +N
  *   · Desktop (≥640px): máx 3 columnas, resto → badge +N
  *
@@ -162,7 +163,7 @@ export function DayCell({
       aria-expanded={isSelected}
       className={[
         cellBase,
-        'h-full cursor-pointer border-day-cell-border bg-day-cell hover:bg-surface-elevated',
+        'h-full cursor-pointer border-day-cell-border bg-surface-base hover:bg-surface-elevated',
         'transition-colors duration-fast ease-default',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-focus-ring',
         isSelected ? 'ring-2 ring-inset ring-interactive-primary' : '',
@@ -174,8 +175,9 @@ export function DayCell({
       onFocus={() => onFocus(dateStr)}
     >
       {/* Número del día */}
-      {/* Centrado vertical: el círculo de "hoy" queda con el mismo aire arriba y abajo */}
-      <div className="flex h-8 sm:h-9 shrink-0 items-center justify-center">
+      {/* Encabezado oscuro con el número. Centrado vertical: el círculo de "hoy" queda con
+          el mismo aire arriba y abajo. */}
+      <div className="flex h-8 sm:h-9 shrink-0 items-center justify-center border-b border-inherit bg-day-header">
         {isToday ? (
           <span className="flex h-[22px] w-[22px] sm:h-7 sm:w-7 items-center justify-center rounded-full bg-interactive-primary text-interactive-primary-text text-xs sm:text-sm font-bold">
             {dayNumber}
@@ -185,8 +187,8 @@ export function DayCell({
         )}
       </div>
 
-      {/* Las 24 h del día: el color solo llena las horas en turno; el franco deja ver la celda */}
-      <div className="mx-1 mb-1 flex min-h-0 flex-1 gap-px overflow-hidden rounded-sm">
+      {/* Las 24 h del día: el color solo llena las horas en turno; el franco queda en blanco */}
+      <div className="m-1 flex min-h-0 flex-1 gap-px overflow-hidden rounded-sm">
         {columns.map((r, i) => (
           <ShiftColumn
             key={r.configId}

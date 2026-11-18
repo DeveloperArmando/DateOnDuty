@@ -391,8 +391,8 @@ Incrementar el número de la última entrada. No reordenar entradas existentes.
 ---
 
 ### D-047 — Celda del día como línea de tiempo vertical
-**Decisión:** Cada turno es una columna que representa las 24 h del día, de arriba (00:00) a abajo (24:00). El color llena solo las horas en turno y el franco queda en blanco. La hora de entrada va arriba del bloque de color y la de salida abajo. La celda completa del día lleva borde marcado y fondo un poco más oscuro (`--color-day-cell`, `--color-day-cell-border`); el área donde se pinta no tiene fondo propio. Con varios turnos las columnas van lado a lado (máx. 2 en móvil, 3 en escritorio) y las horas se acortan en móvil (`formatShiftTime` con `short`).
-**Alternativas:** Degradado de izquierda a derecha por franja horizontal (versión anterior; no distinguía bien entrada, salida y franco); fondo oscuro solo en el área de horarios (probado, descartado por Armando).
+**Decisión:** Cada turno es una columna que representa las 24 h del día, de arriba (00:00) a abajo (24:00). El color llena solo las horas en turno y el franco queda en blanco. La hora de entrada va arriba del bloque de color y la de salida abajo. La celda lleva borde marcado (`--color-day-cell-border`) y el encabezado con el número del día, un fondo más oscuro (`--color-day-header`); el área donde se pinta queda clara. Con varios turnos las columnas van lado a lado (máx. 2 en móvil, 3 en escritorio) y las horas se acortan en móvil (`formatShiftTime` con `short`).
+**Alternativas:** Degradado de izquierda a derecha por franja horizontal (versión anterior; no distinguía bien entrada, salida y franco); fondo oscuro en el área de horarios (probado, descartado por Armando) y en la celda completa (probado, descartado: el oscuro va en el encabezado del día).
 **Razón:** Pedido de Armando tras revisar la vista previa: se entiende de un vistazo cuándo empieza y termina el turno y que "en blanco" es franco.
 **Consecuencias:** `core/shift-format/day-segments.ts` traduce un `ShiftStatus` a tramos; `DayCell` solo los dibuja. El color del texto de las horas se elige por contraste con el color del turno.
 
