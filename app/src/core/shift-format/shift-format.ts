@@ -7,7 +7,7 @@ export interface FormatShiftTimeOptions {
   compact?: boolean
   /**
    * Para columnas muy angostas: con minutos :00 deja solo la hora ("8h" en 24h y
-   * militar, "8 AM" en 12h); con otros minutos usa el formato completo.
+   * militar, "8a" / "8p" en 12h); con otros minutos usa el formato completo.
    */
   short?: boolean
 }
@@ -29,7 +29,7 @@ export function formatShiftTime(
   const m = parseInt(mStr, 10)
 
   if (options.short && m === 0) {
-    if (format === '12h') return `${h % 12 === 0 ? 12 : h % 12} ${h >= 12 ? 'PM' : 'AM'}`
+    if (format === '12h') return `${h % 12 === 0 ? 12 : h % 12}${h >= 12 ? 'p' : 'a'}`
     return `${h}h`
   }
 

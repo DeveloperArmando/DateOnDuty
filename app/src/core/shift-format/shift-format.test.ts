@@ -39,8 +39,9 @@ describe('formatShiftTime — short (columnas angostas)', () => {
   it('con minutos :00 deja solo la hora', () => {
     expect(formatShiftTime('08:00', '24h', { short: true })).toBe('8h')
     expect(formatShiftTime('20:00', 'military', { short: true })).toBe('20h')
-    expect(formatShiftTime('20:00', '12h', { short: true })).toBe('8 PM')
-    expect(formatShiftTime('00:00', '12h', { short: true })).toBe('12 AM')
+    expect(formatShiftTime('20:00', '12h', { short: true })).toBe('8p')
+    expect(formatShiftTime('07:00', '12h', { short: true })).toBe('7a')
+    expect(formatShiftTime('00:00', '12h', { short: true })).toBe('12a')
   })
 
   it('con otros minutos usa el formato completo para no perder información', () => {
