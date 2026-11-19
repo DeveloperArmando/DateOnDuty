@@ -13,7 +13,13 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { format, addDays } from 'date-fns'
 import { es } from 'date-fns/locale'
-import type { ShiftConfiguration, ShiftScheme, TimeFormat } from '@/core/shift-calculator/types'
+import { PRESET_SCHEMES } from '@/core/shift-calculator/types'
+import type {
+  PresetScheme,
+  ShiftConfiguration,
+  ShiftScheme,
+  TimeFormat,
+} from '@/core/shift-calculator/types'
 import { useConfigStore } from '@/stores/config-store'
 import { useThemeStore } from '@/stores/theme-store'
 import { Button } from '@/shared/components/Button'
@@ -23,12 +29,12 @@ import { ColorPicker } from './ColorPicker'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type SchemeKey = '24x48' | '12x36' | '48x48' | 'custom'
+type SchemeKey = PresetScheme | 'custom'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const PRESET_SCHEMES: SchemeKey[] = ['24x48', '12x36', '48x48', 'custom']
-const TIME_FORMATS: TimeFormat[] = ['24h', '12h', 'military']
+const SCHEME_KEYS: SchemeKey[] = [...PRESET_SCHEMES, 'custom']
+const TIME_FORMATS: TimeFormat[] = ['12h', '24h', 'military']
 
 const GRID_COLORS = [
   { value: '#E5E7EB', key: 'gridColorLight' },
@@ -90,7 +96,7 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
   const [currentlyOnRest, setCurrentlyOnRest] = useState(false)
   const [nextShiftOffset, setNextShiftOffset] = useState(1)
   const [color, setColor] = useState(config?.color ?? '#2563EB')
-  const [timeFormat, setTimeFormat] = useState<TimeFormat>(config?.timeFormat ?? '24h')
+  const [timeFormat, setTimeFormat] = useState<TimeFormat>(config?.timeFormat ?? '12h')
 
   // Global preferences (only written when isDefault=true).
   // El tema no tiene copia local: se aplica al instante, igual que el botón del AppBar.
@@ -287,7 +293,7 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
         <fieldset>
           <legend className="mb-2 text-sm font-medium text-text-primary">{t('scheme')}</legend>
           <div className="space-y-2">
-            {PRESET_SCHEMES.map((key) => (
+            {SCHEME_KEYS.map((key) => (
               <label key={key} className="flex cursor-pointer items-center gap-2.5">
                 <input
                   type="radio"
@@ -298,13 +304,7 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
                   className="accent-interactive-primary"
                 />
                 <span className="text-sm text-text-primary">
-                  {key === '24x48'
-                    ? t('scheme24x48')
-                    : key === '12x36'
-                      ? t('scheme12x36')
-                      : key === '48x48'
-                        ? t('scheme48x48')
-                        : t('schemeCustom')}
+                  {key === 'custom' ? t('schemeCustom') : t(`scheme${key}`)}
                 </span>
               </label>
             ))}
@@ -493,10 +493,10 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
                   className="accent-interactive-primary"
                 />
                 <span className="text-sm text-text-primary">
-                  {fmt === '24h'
-                    ? t('timeFormat24h')
-                    : fmt === '12h'
-                      ? t('timeFormat12h')
+                  {fmt === '12h'
+                    ? t('timeFormat12h')
+                    : fmt === '24h'
+                      ? t('timeFormat24h')
                       : t('timeFormatMilitary')}
                 </span>
               </label>
@@ -592,9 +592,9 @@ export function ShiftConfigForm({ mode, isDefault, config }: ShiftConfigFormProp
         </Button>
       </form>
 
-      {/* Toast de confirmación — navega a /config al cerrarse */}
+      {/* Toast de confirmación — regresa al calendario al cerrarse (D-050) */}
       {showToast && (
-        <Toast variant="success" message={t('configSaved')} onDismiss={() => navigate('/config')} />
+        <Toast variant="success" message={t('configSaved')} onDismiss={() => navigate('/')} />
       )}
     </>
   )

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**DateOnDuty** is a frontend-only web app for rotating shift workers (24x48, 12x36, 48x48, etc.) to visualize their work calendar, query any date, and share their schedule. No backend in MVP (v1.0) — all logic runs in the browser with localStorage as the only persistence.
+**DateOnDuty** is a frontend-only web app for rotating shift workers (24x48, 12x36, 12x24, 48x48, etc.) to visualize their work calendar, query any date, and share their schedule. No backend in MVP (v1.0) — all logic runs in the browser with localStorage as the only persistence.
 
 The project is in **implementation phase**. Core Engine, stores, and the Calendar, Config, Search, Onboarding and Sharing features are implemented. Feedback (Formspree form) and the legal pages are still stubs — see `docs/action-plan.md`.
 
@@ -173,7 +173,7 @@ Use `<Link>` or `useNavigate` for internal navigation — never `<a href>`.
 
 ## Shift Calculation Algorithm
 
-Preset schemes resolve as: `24x48 → (24, 48)`, `12x36 → (12, 36)`, `48x48 → (48, 48)`.
+Preset schemes resolve as: `24x48 → (24, 48)`, `12x36 → (12, 36)`, `12x24 → (12, 24)`, `48x48 → (48, 48)`. The list lives in one place, `PRESET_SCHEMES` in `core/shift-calculator/types.ts`; decoder, store and form derive from it. A new preset also needs its entry in `resolveScheme` (typed as `Record<PresetScheme, …>`, so it won't compile otherwise) and its `schemeXxXX` key in `i18n/locales/es/config.json`.
 
 ```
 cycleTotal = workHours + restHours

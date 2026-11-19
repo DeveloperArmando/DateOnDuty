@@ -1,4 +1,4 @@
-import type { ShiftConfiguration, ShiftStatus, ResolvedScheme } from './types'
+import type { ShiftConfiguration, ShiftStatus, ResolvedScheme, PresetScheme } from './types'
 
 const MINUTES_PER_DAY = 24 * 60
 const MS_PER_MINUTE = 60 * 1000
@@ -31,12 +31,14 @@ function minutesToTime(totalMinutes: number): string {
  */
 export function resolveScheme(scheme: ShiftConfiguration['scheme']): ResolvedScheme {
   if (typeof scheme === 'string') {
-    const presets: Record<string, ResolvedScheme> = {
+    // Record<PresetScheme, …>: agregar un preset sin resolverlo aquí no compila
+    const presets: Record<PresetScheme, ResolvedScheme> = {
       '24x48': { workHours: 24, restHours: 48 },
       '12x36': { workHours: 12, restHours: 36 },
+      '12x24': { workHours: 12, restHours: 24 },
       '48x48': { workHours: 48, restHours: 48 },
     }
-    return presets[scheme]!
+    return presets[scheme]
   }
   return { workHours: scheme.workHours, restHours: scheme.restHours }
 }

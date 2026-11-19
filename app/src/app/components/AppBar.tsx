@@ -48,6 +48,7 @@ export function AppBar() {
   const pageTitle = (() => {
     const p = location.pathname
     if (p === '/config') return t('pageTitle.config')
+    if (p === '/config/new') return t('pageTitle.configNew')
     if (p.startsWith('/config/')) return t('pageTitle.configDetail')
     if (p === '/search') return t('pageTitle.search')
     if (p === '/feedback') return t('pageTitle.feedback')

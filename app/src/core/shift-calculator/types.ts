@@ -1,4 +1,11 @@
-export type PresetScheme = '24x48' | '12x36' | '48x48'
+/** Esquemas predeterminados. Fuente única: decoder, store, formulario y motor derivan de aquí. */
+export const PRESET_SCHEMES = ['24x48', '12x36', '12x24', '48x48'] as const
+
+export type PresetScheme = (typeof PRESET_SCHEMES)[number]
+
+export function isPresetScheme(value: string): value is PresetScheme {
+  return (PRESET_SCHEMES as readonly string[]).includes(value)
+}
 
 export interface CustomScheme {
   type: 'custom'

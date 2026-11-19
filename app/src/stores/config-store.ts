@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { format } from 'date-fns'
+import { isPresetScheme } from '@/core/shift-calculator/types'
 import type { ShiftConfiguration, ShiftScheme } from '@/core/shift-calculator/types'
 import type { SharedConfigPayload } from '@/core/url-encoder/types'
 
@@ -31,7 +32,7 @@ function createDefaultConfig(): ShiftConfiguration {
     name: null,
     scheme: '24x48',
     entryTime: '08:00',
-    timeFormat: '24h',
+    timeFormat: '12h',
     cycleStartDate: todayISO(),
     color: '#2563EB',
     isActive: true,
@@ -43,7 +44,7 @@ function createDefaultConfig(): ShiftConfiguration {
  * El decoder ya valida el string antes de llamar a esta función.
  */
 function parseScheme(s: string): ShiftScheme {
-  if (s === '24x48' || s === '12x36' || s === '48x48') return s
+  if (isPresetScheme(s)) return s
   const match = /^C(\d+):(\d+)$/.exec(s)
   if (match) {
     return { type: 'custom', workHours: parseInt(match[1], 10), restHours: parseInt(match[2], 10) }
@@ -163,7 +164,7 @@ export const useConfigStore = create<ConfigStore>()(
             scheme: parseScheme(payload.s),
             entryTime: payload.e,
             cycleStartDate: payload.d,
-            timeFormat: '24h',
+            timeFormat: '12h',
             color: payload.c,
             isActive: true,
           }

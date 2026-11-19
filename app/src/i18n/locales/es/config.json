@@ -14,6 +14,7 @@
   "scheme": "Esquema de turno",
   "scheme24x48": "24×48 horas",
   "scheme12x36": "12×36 horas",
+  "scheme12x24": "12×24 horas",
   "scheme48x48": "48×48 horas",
   "schemeCustom": "Personalizado",
   "customWorkHours": "Horas de trabajo",

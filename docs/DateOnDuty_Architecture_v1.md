@@ -380,7 +380,7 @@ src/
 ```typescript
 // core/shift-calculator/types.ts
 
-type PresetScheme = "24x48" | "12x36" | "48x48";
+type PresetScheme = "24x48" | "12x36" | "12x24" | "48x48";
 
 interface CustomScheme {
   type: "custom";
@@ -469,7 +469,7 @@ Objeto serializado antes de Base64:
 // core/url-sharing/types.ts
 
 interface SharedConfigPayload {
-  s: string;          // scheme: "24x48" | "12x36" | "48x48" | "CwHrH:wHrH" (custom: "C12:24")
+  s: string;          // scheme: "24x48" | "12x36" | "12x24" | "48x48" | "CwHrH:wHrH" (custom: "C12:24")
   e: string;          // entryTime: "08:00"
   d: string;          // cycleStartDate: "2026-02-20"
   c: string;          // color: "#2563EB"
@@ -489,7 +489,7 @@ Para esquemas personalizados, el campo `s` usa el formato `C{workHours}:{restHou
 - `dod-configs` almacena un array de `ShiftConfiguration`. El primer elemento es siempre la config default (`isDefault: true`).
 - `entryTime` se almacena SIEMPRE en formato "HH:mm" de 24 horas internamente. La propiedad `timeFormat` solo afecta la visualizacion.
 - `cycleStartDate` se almacena SIEMPRE en formato ISO "YYYY-MM-DD".
-- Para esquemas preset, `scheme` es un string literal: `"24x48"`, `"12x36"`, `"48x48"`.
+- Para esquemas preset, `scheme` es un string literal: `"24x48"`, `"12x36"`, `"12x24"`, `"48x48"`.
 - Para esquemas custom, `scheme` es un objeto `{ type: "custom", workHours: number, restHours: number }`.
 - La config default NUNCA tiene `isActive: false`. Si se intenta, ignorar silenciosamente.
 - El limite de configs adicionales es 10. Validar en el store antes de agregar.
@@ -555,6 +555,7 @@ funcion calcularTurno(config, fechaObjetivo):
 |---|---|---|---|
 | 24x48 | 24 | 48 | 72 |
 | 12x36 | 12 | 36 | 48 |
+| 12x24 | 12 | 24 | 36 |
 | 48x48 | 48 | 48 | 96 |
 
 ### 5.4 Consideraciones de Performance

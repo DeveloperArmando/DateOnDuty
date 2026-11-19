@@ -19,7 +19,7 @@
 ## 1. Visión del Producto
 
 ### Problema que resuelve
-Los trabajadores con turnos rotativos (24x48, 12x36, 48x48, etc.) pueden calcular intuitivamente su semana laboral, pero pierden contexto cuando necesitan saber qué turno tendrán en una fecha específica futura o pasada: un cumpleaños, un evento familiar, una cita médica. Hoy resuelven esto manualmente con cálculos mentales o en papel.
+Los trabajadores con turnos rotativos (24x48, 12x36, 12x24, 48x48, etc.) pueden calcular intuitivamente su semana laboral, pero pierden contexto cuando necesitan saber qué turno tendrán en una fecha específica futura o pasada: un cumpleaños, un evento familiar, una cita médica. Hoy resuelven esto manualmente con cálculos mentales o en papel.
 
 ### Solución
 **DateOnDuty** es una aplicación web de consulta de turnos rotativos que permite a cualquier trabajador visualizar su calendario laboral de forma clara y visual, consultar cualquier fecha y conocer su turno en segundos, compartir su configuración con familia y compañeros, y personalizar la experiencia según su horario y preferencias.
@@ -193,7 +193,7 @@ El MVP permite que un usuario pueda:
 *Como trabajador, quiero configurar mi esquema de turno, para que el calendario refleje mis días reales de trabajo.*
 
 **Criterios de aceptación:**
-- El sistema ofrece los esquemas predeterminados: 24x48, 12x36, 48x48.
+- El sistema ofrece los esquemas predeterminados: 24x48, 12x36, 12x24, 48x48.
 - Existe la opción "Personalizado" donde el usuario configura horas de trabajo y horas de descanso.
 - Restricciones del esquema personalizado:
   - Mínimo de horas de trabajo: 12. Máximo: 72.
@@ -441,7 +441,7 @@ El MVP permite que un usuario pueda:
 
 - Calendario visual con turnos, gradiente de color, indicadores de hora y navegación completa
 - Vista expandida del día con navegación lateral y vertical
-- Configuración de turno: predeterminados (24x48, 12x36, 48x48) y personalizado (mínimo 12h, máximo 72h)
+- Configuración de turno: predeterminados (24x48, 12x36, 12x24, 48x48) y personalizado (mínimo 12h, máximo 72h)
 - Hora de entrada en horas completas o medias horas. Formatos: 12h, 24h, militar
 - Primer día de semana configurable (domingo por defecto, opción lunes)
 - Búsqueda por fecha con resultado detallado por configuración
