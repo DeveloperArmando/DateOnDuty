@@ -28,7 +28,7 @@ La primera versión es [`calendario-de-turno-laboral`](https://github.com/Develo
 | Hora de entrada y salida | No | Sí, con turnos que cruzan medianoche |
 | Consultar una fecha | Desplazarse por el año | Búsqueda directa |
 | Compartir | No | Enlace con la configuración |
-| Pruebas | No | 107 pruebas unitarias del motor de cálculo |
+| Pruebas | No | 121 pruebas unitarias del motor de cálculo |
 
 La v2 conserva el comportamiento de la v1: una prueba compara ambos algoritmos día por día de 2020 a 2030 (`shift-calculator.test.ts`, "paridad con la v1").
 

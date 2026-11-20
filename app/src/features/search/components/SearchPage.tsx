@@ -224,7 +224,8 @@ export default function SearchPage() {
             )}
 
             {/* Botón Ver en calendario */}
-            <div className="sticky bottom-0 z-10 bg-surface-base py-3">
+            {/* Sticky justo encima de la barra inferior global: con bottom-0 quedaba debajo de ella */}
+            <div className="sticky bottom-[var(--bottom-bar-height)] z-10 bg-surface-base py-3">
               <Button
                 variant="primary"
                 fullWidth
