@@ -8,7 +8,7 @@
 
 | Área | Estado |
 |---|---|
-| Core Engine (shift-calculator, shift-format, url-encoder, wcag-contrast) | ✅ Completo (107 tests) |
+| Core Engine (shift-calculator, shift-format, url-encoder, wcag-contrast) | ✅ Completo (121 tests) |
 | Stores (config-store, ui-store, theme-store) | ✅ Completo |
 | App Shell (AppShell, AppBar, BottomBar, Footer, router, i18n) | ✅ Completo |
 | Shared components (Button, LoadingDots, ErrorMessage, Toast, scrollToError) | ✅ Completo |

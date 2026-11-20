@@ -22,7 +22,7 @@ export function BottomBar() {
   return (
     <nav
       aria-label={t('globalActions')}
-      className="sticky bottom-0 z-[25] flex items-center justify-center gap-3 border-t border-border-default bg-surface-elevated px-4 py-2"
+      className="sticky bottom-0 z-[25] flex h-[var(--bottom-bar-height)] items-center justify-center gap-3 border-t border-border-default bg-surface-elevated px-4"
     >
       {!isCurrentMonth && (
         <Button

@@ -523,6 +523,12 @@
 }
 
 /* ─── Base styles ────────────────────────────────────────────────────────── */
+/* Alto fijo de la barra inferior global (BottomBar). Lo usan la propia barra y los elementos
+   sticky que deben quedar justo encima de ella, para que no se tapen entre sí. */
+:root {
+  --bottom-bar-height: 3.25rem;
+}
+
 html {
   font-family: var(--font-sans);
   background-color: var(--color-surface-base);
