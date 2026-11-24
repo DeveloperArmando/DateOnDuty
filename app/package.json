@@ -23,7 +23,7 @@
     "zustand": "^5.0.0",
     "date-fns": "^4.0.0",
     "react-i18next": "^15.0.0",
-    "i18next": "^24.0.0",
+    "i18next": "^27.2.6",
     "@use-gesture/react": "^10.0.0",
     "lucide-react": "^0.511.0"
   },
